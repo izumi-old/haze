@@ -1,5 +1,8 @@
 package org.izumi.haze.filesystem;
 
+import org.izumi.haze.HazeException;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -18,6 +21,14 @@ public class File extends Element {
         filename = nameParts[0];
         if (nameParts.length > 1) {
             extension = new ExtensionImpl(nameParts[nameParts.length - 1]);
+        }
+    }
+
+    public String getContent() {
+        try {
+            return Files.readString(path);
+        } catch (IOException ex) {
+            throw new HazeException("An error occurred while reading the body of a file", ex);
         }
     }
 
