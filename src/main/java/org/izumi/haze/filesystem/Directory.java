@@ -14,38 +14,6 @@ public class Directory extends Element {
         }
     }
 
-   /* public Collection<File> getSubFiles() {
-        try {
-            return Files.walk(path, 1)
-                    .filter(Files::isRegularFile)
-                    .map(LazyFile::new)
-                    .collect(Collectors.toList());
-        } catch (IOException ex) {
-            throw new FilesystemException("An error occurred while walking substructure. ", ex);
-        }
-    }
-
-    public Collection<Directory> getSubDirectories() {
-        try {
-            return Files.walk(path, 1)
-                    .filter(path1 -> !path.equals(path1))
-                    .filter(Files::isDirectory)
-                    .map(Directory::new)
-                    .collect(Collectors.toList());
-        } catch (IOException ex) {
-            throw new FilesystemException("An error occurred while walking substructure. ", ex);
-        }
-    }*/ //TODO: delete
-
-    /*public Collection<File> getAllSubFiles() {
-        Collection<File> result = new LinkedList<>(getSubFiles());
-        for (Directory directory : getSubDirectories()) {
-            result.addAll(directory.getAllSubFiles());
-        }
-
-        return result;
-    }*/ //TODO: delete
-
     public Map<String, File> getAllRelativizedSubFiles() {
         try {
             Map<String, File> result = new HashMap<>();

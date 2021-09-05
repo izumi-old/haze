@@ -31,17 +31,6 @@ public class Wishes extends LinkedList<Wish> {
         return extensions;
     }
 
-    public Wishes getAllByExtension(Extension extension) {
-        Wishes result = new Wishes();
-        for (Wish wish : this) {
-            if (wish.source.getExtension().equals(extension)) {
-                result.add(wish);
-            }
-        }
-
-        return result;
-    }
-
     public void filter(Predicate<Wish> predicate) {
         removeIf(wish -> !predicate.test(wish));
     }
