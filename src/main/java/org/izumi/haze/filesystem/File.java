@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 public class File extends Element {
     private String filename;
-    private String extension;
+    private Extension extension;
 
     public File(Path path) {
         super(path);
@@ -17,7 +17,7 @@ public class File extends Element {
         String[] nameParts = parts[parts.length - 1].split("\\.");
         filename = nameParts[0];
         if (nameParts.length > 1) {
-            extension = nameParts[nameParts.length - 1];
+            extension = new ExtensionImpl(nameParts[nameParts.length - 1]);
         }
     }
 
@@ -27,5 +27,19 @@ public class File extends Element {
 
     public boolean isNotSupported() {
         return !isSupported();
+    }
+
+    public Extension getExtension() {
+        return extension;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 }
