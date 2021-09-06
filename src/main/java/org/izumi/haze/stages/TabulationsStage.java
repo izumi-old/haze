@@ -1,13 +1,13 @@
-package org.izumi.haze.modules.stages;
+package org.izumi.haze.stages;
 
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SpacesStage implements Stage {
+public class TabulationsStage implements Stage {
 
     @Override
     public String apply(@NonNull String string) {
-        return string.replaceAll(" ", "");
+        return string.replaceAll("\t", "");
     }
 }

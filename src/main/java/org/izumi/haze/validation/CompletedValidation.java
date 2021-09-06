@@ -1,4 +1,4 @@
-package org.izumi.haze;
+package org.izumi.haze.validation;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class CompletedValidation {
         }
     }
 
-    enum Result {
+    public enum Result {
         GOOD, BAD
     }
 }

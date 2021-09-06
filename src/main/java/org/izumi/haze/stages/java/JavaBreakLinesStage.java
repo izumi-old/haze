@@ -1,6 +1,6 @@
-package org.izumi.haze.modules.stages.java;
+package org.izumi.haze.stages.java;
 
-import org.izumi.haze.modules.stages.BreakLinesStage;
+import org.izumi.haze.stages.BreakLinesStage;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,6 +1,6 @@
-package org.izumi.haze.modules.stages.java;
+package org.izumi.haze.stages.java;
 
-import org.izumi.haze.modules.stages.TabulationsStage;
+import org.izumi.haze.stages.TabulationsStage;
 import org.springframework.stereotype.Component;
 
 @Component

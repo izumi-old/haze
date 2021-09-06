@@ -1,4 +1,4 @@
-package org.izumi.haze.modules.stages;
+package org.izumi.haze.stages;
 
 import lombok.NonNull;
 

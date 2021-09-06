@@ -4,8 +4,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.filesystem.Extension;
 import org.izumi.haze.modules.Module;
-import org.izumi.haze.modules.stages.java.JavaStage;
-import org.izumi.haze.modules.stages.Stage;
+import org.izumi.haze.stages.java.JavaStage;
+import org.izumi.haze.stages.Stage;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
