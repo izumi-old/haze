@@ -1,5 +1,6 @@
 package org.izumi.haze;
 
+import lombok.NonNull;
 import org.izumi.haze.filesystem.Extension;
 
 import java.util.Collection;
@@ -13,7 +14,7 @@ public class Wishes extends LinkedList<Wish> {
         super();
     }
 
-    public Wishes(Collection<? extends Wish> c) {
+    public Wishes(@NonNull Collection<? extends Wish> c) {
         super(c);
         for (Wish wish : c) {
             if (wish == null) {
@@ -31,7 +32,7 @@ public class Wishes extends LinkedList<Wish> {
         return extensions;
     }
 
-    public void filter(Predicate<Wish> predicate) {
+    public void filter(@NonNull Predicate<Wish> predicate) {
         removeIf(wish -> !predicate.test(wish));
     }
 }

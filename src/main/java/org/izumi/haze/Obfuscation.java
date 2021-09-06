@@ -5,11 +5,14 @@ import org.izumi.haze.filesystem.Extension;
 import org.izumi.haze.filesystem.File;
 import org.izumi.haze.modules.Module;
 import org.izumi.haze.modules.ModuleFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
 @RequiredArgsConstructor
 public class Obfuscation {
+    private static final Logger log = LoggerFactory.getLogger(Obfuscation.class);
     private final ModuleFactory moduleFactory;
     private final Collection<String> paths;
 
@@ -20,12 +23,16 @@ public class Obfuscation {
 
         Collection<Extension> extensions = wishes.getDistinctExtensions();
         for (Extension extension : extensions) {
-            Module module = moduleFactory.getAbleToHandle(extension);
-            for (Wish wish : wishes) {
-                File target = wish.target;
-                String content = module.handle(wish.source);
-                target.changeContent(content);
-                target.save();
+            try {
+                Module module = moduleFactory.getAbleToHandle(extension);
+                for (Wish wish : wishes) {
+                    String content = module.handle(wish.source.getContent());
+                    File target = wish.target;
+                    target.changeContent(content);
+                    target.save();
+                }
+            } catch (HazeException ex) {
+                log.warn("Unable to handle files with extension: " + extension);
             }
         }
     }

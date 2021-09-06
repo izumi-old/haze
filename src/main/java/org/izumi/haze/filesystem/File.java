@@ -1,5 +1,7 @@
 package org.izumi.haze.filesystem;
 
+import lombok.NonNull;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -45,7 +47,7 @@ public abstract class File extends Element {
         }
     }
 
-    public void changeContent(String newContent) {
+    public void changeContent(@NonNull String newContent) {
         content = newContent;
         contentChanged = true;
     }

@@ -1,5 +1,6 @@
 package org.izumi.haze;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.filesystem.Directory;
 import org.izumi.haze.filesystem.File;
@@ -16,6 +17,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class Parsing {
     private static final Logger log = LoggerFactory.getLogger(Parsing.class);
+
+    @NonNull
     private final Collection<String> input;
     private final Wishes wishes = new Wishes();
     private boolean parsed = false;

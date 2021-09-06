@@ -1,15 +1,20 @@
 package org.izumi.haze;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class CompletedValidation {
+
+    @NonNull
     public final String message;
+
+    @NonNull
     public final Result result;
 
-    public CompletedValidation(Result result) {
+    public CompletedValidation(@NonNull Result result) {
         this("", result);
     }
 
