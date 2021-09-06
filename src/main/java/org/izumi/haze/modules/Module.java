@@ -1,9 +1,9 @@
 package org.izumi.haze.modules;
 
+import lombok.NonNull;
 import org.izumi.haze.filesystem.Extension;
-import org.izumi.haze.filesystem.Files;
 
 public interface Module {
-    boolean canHandle(Extension extension);
-    void handle(Files files);
+    boolean canHandle(@NonNull Extension extension);
+    String handle(@NonNull String content);
 }

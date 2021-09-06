@@ -7,4 +7,8 @@ public interface Extension {
     default boolean is(String candidate) {
         return toString().equalsIgnoreCase(candidate);
     }
+
+    default boolean isBlank() {
+        return toString().isBlank();
+    }
 }

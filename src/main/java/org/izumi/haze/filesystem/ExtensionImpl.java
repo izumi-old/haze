@@ -4,14 +4,17 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
 public class ExtensionImpl implements Extension {
+    private static final String BLANK_EXTENSION_VALUE = "";
     private final String value;
 
     public ExtensionImpl(String value) {
-        if (value.contains(".")) {
+        if (value == null) {
+            this.value = BLANK_EXTENSION_VALUE;
+        } else if (value.contains(".")) {
             throw new IllegalArgumentException("Given value contains dots. Given: " + value);
+        } else {
+            this.value = value;
         }
-
-        this.value = value;
     }
 
     @Override

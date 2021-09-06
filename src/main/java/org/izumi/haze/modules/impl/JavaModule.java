@@ -1,9 +1,8 @@
 package org.izumi.haze.modules.impl;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.filesystem.Extension;
-import org.izumi.haze.filesystem.File;
-import org.izumi.haze.filesystem.Files;
 import org.izumi.haze.modules.Module;
 import org.izumi.haze.modules.stages.java.JavaStage;
 import org.izumi.haze.modules.stages.Stage;
@@ -17,19 +16,17 @@ public class JavaModule implements Module {
     private final Collection<JavaStage> stages;
 
     @Override
-    public boolean canHandle(Extension extension) {
-        return extension != null && extension.is("java");
+    public boolean canHandle(@NonNull Extension extension) {
+        return extension.is("java");
     }
 
     @Override
-    public void handle(Files files) {
-        for (File file : files) {
-            String content = file.getContent();
-            for (Stage stage : stages) {
-                content = stage.apply(content);
-            }
+    public String handle(@NonNull String content) {
+        String result = content;
+        for (Stage stage : stages) {
+            result = stage.apply(result);
         }
 
-        throw new UnsupportedOperationException(); //TODO: implement
+        return result;
     }
 }
