@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class ExtensionImpl implements Extension {
     private static final String BLANK_EXTENSION_VALUE = "";
+    public static final Extension EMPTY_EXTENSION = new ExtensionImpl(BLANK_EXTENSION_VALUE);
     private final String value;
 
     public ExtensionImpl(String value) {

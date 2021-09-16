@@ -31,6 +31,8 @@ public abstract class File extends Element {
         filename = nameParts[0];
         if (nameParts.length > 1) {
             extension = new ExtensionImpl(nameParts[nameParts.length - 1]);
+        } else {
+            extension = ExtensionImpl.EMPTY_EXTENSION;
         }
         charset = StandardCharsets.UTF_8; //TODO: try autodetect used charset
     }

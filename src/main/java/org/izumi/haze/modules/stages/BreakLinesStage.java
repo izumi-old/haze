@@ -1,4 +1,4 @@
-package org.izumi.haze.stages;
+package org.izumi.haze.modules.stages;
 
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
