@@ -1,16 +1,17 @@
 package org.izumi.haze.modules.stages;
 
 import lombok.NonNull;
+import org.izumi.haze.modules.Content;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public interface Stage {
-    String apply(@NonNull String string);
-    default Map<UUID, String> apply(@NonNull Map<UUID, String> strings) {
-        Map<UUID, String> result = new HashMap<>();
-        for (Map.Entry<UUID, String> entry : strings.entrySet()) {
+    Content apply(@NonNull Content content);
+    default Map<UUID, Content> apply(@NonNull Map<UUID, Content> strings) {
+        Map<UUID, Content> result = new HashMap<>();
+        for (Map.Entry<UUID, Content> entry : strings.entrySet()) {
             result.put(entry.getKey(), apply(entry.getValue()));
         }
 

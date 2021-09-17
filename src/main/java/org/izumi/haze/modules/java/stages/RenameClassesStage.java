@@ -26,10 +26,20 @@ public class RenameClassesStage implements JavaStage {
         Collection<Class> classes = new LinkedList<>();
         code.forEach((i, c) -> classes.addAll(c.getClasses()));
 
+        Map<Class, String> renamingMap = new HashMap<>();
         for (Class clazz : classes) {
             String newName = charactersRandomList.getRandom().toString() + integersRandomList.getRandom();
-            for (Map.Entry<UUID, Code> entry : code.entrySet()) {
-                entry.getValue().renameAll(clazz.getName(), newName);
+            renamingMap.put(clazz, newName);
+        }
+
+        for (Map.Entry<Class, String> entry : renamingMap.entrySet()) {
+            for (Map.Entry<UUID, Code> entry1 : code.entrySet()) {
+                entry1.getValue().renameImports(entry.getKey(), entry.getValue());
+            }
+        }
+        for (Map.Entry<Class, String> entry : renamingMap.entrySet()) {
+            for (Map.Entry<UUID, Code> entry1 : code.entrySet()) {
+                entry1.getValue().renameClasses(entry.getKey(), entry.getValue());
             }
         }
 

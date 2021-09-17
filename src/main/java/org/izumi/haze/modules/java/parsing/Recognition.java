@@ -27,7 +27,7 @@ public class Recognition {
             return Element.SCOPE;
         }
 
-        String value = this.value.substring(0, bracesRange.end);
+        String value = this.value.substring(new Range(0, bracesRange.end));
         String before = value.substring(0, bracesRange.start);
 
         unresolvedLemmas = new LinkedList<>();

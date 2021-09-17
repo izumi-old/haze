@@ -1,6 +1,8 @@
 package org.izumi.haze.filesystem;
 
 import lombok.NonNull;
+import org.izumi.haze.modules.Content;
+import org.izumi.haze.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -49,8 +51,21 @@ public abstract class File extends Element {
         }
     }
 
-    public void changeContent(@NonNull String newContent) {
-        content = newContent;
+    protected boolean isContentChanged() {
+        return contentChanged;
+    }
+
+    protected boolean isContentNotChanged() {
+        return !isContentChanged();
+    }
+
+    public void changeContent(@NonNull Content newContent) {
+        String oldPath = this.path.toAbsolutePath().toString();
+        String newPath = StringUtils.replaceLast(oldPath, this.filename, newContent.fileName);
+
+        this.path = Paths.get(newPath);
+        this.filename = newContent.fileName;
+        this.content = newContent.content;
         contentChanged = true;
     }
 
@@ -66,8 +81,8 @@ public abstract class File extends Element {
         return filename;
     }
 
-    public String getContent() {
-        return content;
+    public Content getContent() {
+        return new Content(getFilename(), content);
     }
 
     public Extension getExtension() {

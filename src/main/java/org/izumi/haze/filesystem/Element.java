@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 @EqualsAndHashCode
 public abstract class Element {
-    protected final Path path;
+    protected Path path;
 
     public Element(@NonNull Path path) {
         this.path = path;

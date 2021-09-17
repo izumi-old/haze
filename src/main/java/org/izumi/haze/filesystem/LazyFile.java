@@ -1,5 +1,8 @@
 package org.izumi.haze.filesystem;
 
+import lombok.NonNull;
+import org.izumi.haze.modules.Content;
+
 import java.nio.file.Path;
 
 public class LazyFile extends File {
@@ -29,7 +32,7 @@ public class LazyFile extends File {
     }
 
     @Override
-    public String getContent() {
+    public Content getContent() {
         loadContentIfNecessary();
         return super.getContent();
     }
@@ -46,6 +49,12 @@ public class LazyFile extends File {
         super.save();
     }
 
+    @Override
+    public void changeContent(@NonNull Content newContent) {
+        initiateFieldsIfNecessary();
+        super.changeContent(newContent);
+    }
+
     private void initiateFieldsIfNecessary() {
         if (!fieldsInitiated) {
             initiateFields();
@@ -55,7 +64,7 @@ public class LazyFile extends File {
 
     private void loadContentIfNecessary() {
         initiateFieldsIfNecessary();
-        if (!contentLoaded) {
+        if (!contentLoaded && isContentNotChanged()) {
             loadContent();
             contentLoaded = true;
         }

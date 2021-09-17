@@ -8,6 +8,6 @@ import java.util.UUID;
 
 public interface Module {
     boolean canHandle(@NonNull Extension extension);
-    String handle(@NonNull String content);
-    Map<UUID, String> handle(@NonNull Map<UUID, String> contents);
+    Content handle(@NonNull Content content);
+    Map<UUID, Content> handle(@NonNull Map<UUID, Content> contents);
 }

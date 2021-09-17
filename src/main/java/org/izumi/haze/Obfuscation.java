@@ -3,6 +3,7 @@ package org.izumi.haze;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.filesystem.Extension;
 import org.izumi.haze.filesystem.File;
+import org.izumi.haze.modules.Content;
 import org.izumi.haze.modules.Module;
 import org.izumi.haze.modules.ModuleFactory;
 import org.slf4j.Logger;
@@ -29,16 +30,16 @@ public class Obfuscation {
             try {
                 Module module = moduleFactory.getAbleToHandle(extension);
                 Map<UUID, Wish> wishesMap = new HashMap<>();
-                Map<UUID, String> contents = new HashMap<>();
+                Map<UUID, Content> contents = new HashMap<>();
                 for (Wish wish : wishes) {
                     UUID id = UUID.randomUUID();
                     contents.put(id, wish.source.getContent());
                     wishesMap.put(id, wish);
                 }
 
-                Map<UUID, String> handled = module.handle(contents);
+                Map<UUID, Content> handled = module.handle(contents);
 
-                for (Map.Entry<UUID, String> entry : handled.entrySet()) {
+                for (Map.Entry<UUID, Content> entry : handled.entrySet()) {
                     Wish wish = wishesMap.get(entry.getKey());
                     File target = wish.target;
                     target.changeContent(entry.getValue());

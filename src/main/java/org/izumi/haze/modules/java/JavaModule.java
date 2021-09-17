@@ -3,6 +3,7 @@ package org.izumi.haze.modules.java;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.filesystem.Extension;
+import org.izumi.haze.modules.Content;
 import org.izumi.haze.modules.Module;
 import org.izumi.haze.modules.java.stages.JavaStage;
 import org.izumi.haze.modules.stages.Stage;
@@ -23,18 +24,18 @@ public class JavaModule implements Module {
     }
 
     @Override
-    public String handle(@NonNull String content) {
-        String result = content;
+    public Content handle(@NonNull Content content) {
+        Content result = content;
         for (Stage stage : stages) {
-            result = stage.apply(result);
+            result = stage.apply(content);
         }
 
         return result;
     }
 
     @Override
-    public Map<UUID, String> handle(@NonNull Map<UUID, String> contents) {
-        Map<UUID, String> result = contents;
+    public Map<UUID, Content> handle(@NonNull Map<UUID, Content> contents) {
+        Map<UUID, Content> result = contents;
         for (Stage stage : stages) {
             result = stage.apply(contents);
         }

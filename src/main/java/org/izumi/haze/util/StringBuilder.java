@@ -8,29 +8,22 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class StringBuilder {
-    private Collection<Character> separated = List.of(' ', '.', '<', '>', '(');
+    private final Collection<Character> separated = List.of(' ', '.', '<', '>', '(', ';');
 
     @NonNull
     private final java.lang.StringBuilder value;
 
-    public StringBuilder(@NonNull String value) {
+    public StringBuilder(@NonNull CharSequence value) {
         this(new java.lang.StringBuilder(value));
-    }
-
-    public String substring(int start) {
-        return value.substring(start);
-    }
-
-    public String substring(int start, int end) {
-        return value.substring(start, end);
     }
 
     public String substring(Range range) {
         return value.substring(range.start, range.end);
     }
 
-    public int replaceAllIfSeparate(@NonNull String toReplace, @NonNull String replacement) { //TODO: have to correct this method
-        int number = 0;
+    public int replaceAllIfSeparate(@NonNull String toReplace, @NonNull String replacement) {
+        return replaceAllIfSeparate(new Range(0, value.length() - 1), toReplace, replacement);
+        /*int number = 0;
         int index = value.indexOf(toReplace);
         while (index != -1) {
             if (isSeparated(index, toReplace.length())) {
@@ -41,7 +34,26 @@ public class StringBuilder {
             index = value.indexOf(toReplace, index + toReplace.length());
         }
         int changing = toReplace.length() - replacement.length();
+        return changing * number;*/
+    }
+
+    public int replaceAllIfSeparate(Range range, String toReplace, String replacement) {
+        int number = 0;
+        int index = value.indexOf(toReplace, range.start);
+        while (index != -1 && index + toReplace.length() < range.end) {
+            if (isSeparated(index, toReplace.length())) {
+                number++;
+                value.replace(index, index + toReplace.length(), replacement);
+            }
+
+            index = value.indexOf(toReplace, index + toReplace.length());
+        }
+        int changing = toReplace.length() - replacement.length();
         return changing * number;
+    }
+
+    public void replace(Range range, String replacement) {
+        value.replace(range.start, range.end, replacement);
     }
 
     public char charAt(int index) {
