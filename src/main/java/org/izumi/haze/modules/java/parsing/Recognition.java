@@ -3,8 +3,8 @@ package org.izumi.haze.modules.java.parsing;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.HazeException;
-import org.izumi.haze.modules.java.Keyword;
-import org.izumi.haze.modules.java.Type;
+import org.izumi.haze.modules.java.source.Keyword;
+import org.izumi.haze.modules.java.source.Type;
 import org.izumi.haze.util.Range;
 import org.izumi.haze.string.HazeString;
 

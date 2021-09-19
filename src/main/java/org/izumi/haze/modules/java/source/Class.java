@@ -1,9 +1,6 @@
 package org.izumi.haze.modules.java.source;
 
 import org.izumi.haze.HazeException;
-import org.izumi.haze.modules.java.AccessModifier;
-import org.izumi.haze.modules.java.Keyword;
-import org.izumi.haze.modules.java.Type;
 import org.izumi.haze.modules.java.parsing.TopLevelClassesParsing;
 import org.izumi.haze.modules.java.parsing.TopLevelScopesParsing;
 import org.izumi.haze.modules.java.util.Classes;
@@ -14,7 +11,7 @@ import org.izumi.haze.modules.java.util.impl.ClassesImpl;
 import org.izumi.haze.modules.java.util.impl.CommentsImpl;
 import org.izumi.haze.modules.java.util.impl.ElementsImpl;
 import org.izumi.haze.modules.java.util.impl.HazeStringBuilder;
-import org.izumi.haze.modules.java.util.impl.RangeMap;
+import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.modules.java.util.impl.ScopesImpl;
 import org.izumi.haze.util.Range;
 import org.izumi.haze.string.HazeString;

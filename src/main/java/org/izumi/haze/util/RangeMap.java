@@ -1,6 +1,4 @@
-package org.izumi.haze.modules.java.util.impl;
-
-import org.izumi.haze.util.Range;
+package org.izumi.haze.util;
 
 import java.util.Collection;
 import java.util.Collections;

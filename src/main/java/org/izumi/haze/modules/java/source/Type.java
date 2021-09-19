@@ -1,4 +1,4 @@
-package org.izumi.haze.modules.java;
+package org.izumi.haze.modules.java.source;
 
 import lombok.NonNull;
 

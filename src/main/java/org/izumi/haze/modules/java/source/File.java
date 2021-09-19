@@ -13,7 +13,7 @@ import org.izumi.haze.modules.java.util.impl.CommentsImpl;
 import org.izumi.haze.modules.java.util.impl.ElementsImpl;
 import org.izumi.haze.modules.java.util.impl.HazeStringBuilder;
 import org.izumi.haze.modules.java.util.impl.ImportsImpl;
-import org.izumi.haze.modules.java.util.impl.RangeMap;
+import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.string.HazeString;
 import org.izumi.haze.util.Range;
 
