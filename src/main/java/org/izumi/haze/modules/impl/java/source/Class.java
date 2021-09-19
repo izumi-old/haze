@@ -11,6 +11,8 @@ import org.izumi.haze.modules.impl.java.util.impl.ClassesImpl;
 import org.izumi.haze.modules.impl.java.util.impl.CommentsImpl;
 import org.izumi.haze.modules.impl.java.util.impl.ElementsImpl;
 import org.izumi.haze.string.HazeStringBuilder;
+import org.izumi.haze.string.Regex;
+import org.izumi.haze.string.RegexHazeString;
 import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.modules.impl.java.util.impl.ScopesImpl;
 import org.izumi.haze.util.Range;
@@ -38,7 +40,7 @@ public class Class implements Element {
 
     private final Collection<Keyword> keywords = new LinkedList<>();
     private String name;
-    private String otherSignature = ""; //TODO: generics of class name and implements/extends + parent class name with generics
+    private String otherSignature;
 
     public Class(HazeString value) {
         this.value = value;
@@ -82,6 +84,10 @@ public class Class implements Element {
         variables = new LinkedList<>();
 
         String signature = getSignature();
+        parseOtherSignature(signature);
+       /* .replaceAll(" implements.*", "") //remove implements information
+                .replaceAll(" extends.*", "") //remove extends information
+                .replaceAll("<.+>", ""); //remove generics information*/
         for (Keyword keyword : List.of(Keyword.ABSTRACT, Keyword.FINAL, Keyword.STATIC)) {
             if (signature.contains(keyword.toString())) {
                 keywords.add(keyword);
@@ -152,10 +158,7 @@ public class Class implements Element {
 
     private String getSignature() {
         return value.substring(new Range(0, value.indexOf("{")))
-                .trim()
-                .replaceAll(" implements.*", "") //remove implements information
-                .replaceAll(" extends.*", "") //remove extends information
-                .replaceAll("<.+>", ""); //remove generics information
+                .trim();
     }
 
     private Type parseAndGetType(String signature) {
@@ -219,5 +222,28 @@ public class Class implements Element {
         return new Range(
                 value.firstIndexOf("{") + 1,
                 value.lastIndexOf("}") - 1);
+    }
+
+    private void parseOtherSignature(String signature) {
+        RegexHazeString regexString = new RegexHazeString(signature);
+        Optional<Range> additionalInfo = regexString.firstRangeOfRegex(new Regex("<.+> implements.*"));
+        if (additionalInfo.isEmpty()) {
+            additionalInfo = regexString.firstRangeOfRegex(new Regex("<.+> extends.*"));
+            if (additionalInfo.isEmpty()) {
+                additionalInfo = regexString.firstRangeOfRegex(new Regex("<.+>"));
+                if (additionalInfo.isEmpty()) {
+                    additionalInfo = regexString.firstRangeOfRegex(new Regex(" implements.*"));
+                    if (additionalInfo.isEmpty()) {
+                        additionalInfo = regexString.firstRangeOfRegex(new Regex(" extends.*"));
+                    }
+                }
+            }
+        }
+
+        if (additionalInfo.isPresent()) {
+            otherSignature = regexString.substring(additionalInfo.get());
+        } else {
+            otherSignature = "";
+        }
     }
 }

@@ -1,7 +1,7 @@
 package org.izumi.haze.modules.impl.java.parsing;
 
-import lombok.RequiredArgsConstructor;
 import org.izumi.haze.modules.impl.java.source.Comment;
+import org.izumi.haze.string.RegexHazeString;
 import org.izumi.haze.util.Range;
 import org.izumi.haze.string.Regex;
 import org.izumi.haze.string.HazeString;
@@ -10,11 +10,15 @@ import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-@RequiredArgsConstructor
 public class TopLevelCommentsParsing {
     private static final Regex COMMENT_REGEX = new Regex("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/");
-    private final HazeString value;
+    private final RegexHazeString value;
     private final Range range;
+
+    public TopLevelCommentsParsing(HazeString value, Range range) {
+        this.value = new RegexHazeString(value);
+        this.range = range;
+    }
 
     public TopLevelCommentsParsing(HazeString value) {
         this(value, new Range(value));
@@ -24,7 +28,7 @@ public class TopLevelCommentsParsing {
         SortedMap<Range, Comment> map = new TreeMap<>();
         Range searchIn = range;
         while (true) {
-            Optional<Range> optional = value.rangeOf(searchIn, COMMENT_REGEX);
+            Optional<Range> optional = value.firstRangeOfRegex(searchIn, COMMENT_REGEX);
             if (optional.isEmpty()) {
                 return map;
             }

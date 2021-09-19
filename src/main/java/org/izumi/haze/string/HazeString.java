@@ -1,24 +1,16 @@
 package org.izumi.haze.string;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.izumi.haze.util.Range;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-@RequiredArgsConstructor
 public class HazeString implements CharSequence {
+    protected final java.lang.StringBuilder value;
 
-    @NonNull
-    private final java.lang.StringBuilder value;
-
-    public HazeString(@NonNull CharSequence value) {
-        this(new java.lang.StringBuilder(value));
+    public HazeString(CharSequence value) {
+        this.value = new java.lang.StringBuilder(value);
     }
 
     @Override
@@ -87,16 +79,6 @@ public class HazeString implements CharSequence {
 
     public int indexOf(String str, int fromIndex) {
         return value.indexOf(str, fromIndex);
-    }
-
-    public Optional<Range> rangeOf(Range inRange, Regex regex) {
-        Pattern pattern = Pattern.compile(regex.regex);
-        Matcher matcher = pattern.matcher(value).region(inRange.start, inRange.end);
-        if (matcher.find()) {
-            return Optional.of(new Range(matcher.start(), matcher.end()));
-        }
-
-        return Optional.empty();
     }
 
     public int firstIndexOf(String str) {
