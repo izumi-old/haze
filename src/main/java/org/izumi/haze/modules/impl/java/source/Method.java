@@ -19,7 +19,7 @@ public class Method implements Element {
     }
 
     @Override
-    public void renameClassAndUsages(Class clazz, String replacement) {
+    public void renameClassAndUsages(String name, String replacement) {
         //TODO:
     }
 

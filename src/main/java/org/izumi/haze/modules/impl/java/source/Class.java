@@ -15,7 +15,6 @@ import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.modules.impl.java.util.impl.ScopesImpl;
 import org.izumi.haze.util.Range;
 import org.izumi.haze.string.HazeString;
-import org.izumi.haze.string.SeparatedStringPredicate;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -43,6 +42,27 @@ public class Class implements Element {
 
     public Class(HazeString value) {
         this.value = value;
+    }
+
+    @Override
+    public void renameClassAndUsages(String name, String replacement) {
+        classes.renameClassAndUsages(name, replacement);
+        scopes.renameClassAndUsages(name, replacement);
+        comments.renameClassAndUsages(name, replacement);
+
+        if (this.name.equals(name)) {
+            this.name = replacement;
+        }
+    }
+
+    @Override
+    public long getDeclarationOrder() {
+        return declarationOrder;
+    }
+
+    @Override
+    public void setDeclarationOrder(long declarationOrder) {
+        this.declarationOrder = declarationOrder;
     }
 
     public String getName() {
@@ -102,27 +122,6 @@ public class Class implements Element {
 
         setUpOrderNumbers(elementsMap);
         parseRecursive();
-    }
-
-    public void renameClassAndUsages(Class clazz, String replacement) {
-        if (name.equals(clazz.getName())) {
-            name = replacement;
-        }
-        value.replaceAllIfSeparate(clazz.getName(), replacement, new SeparatedStringPredicate());
-
-        classes.renameClassAndUsages(clazz, replacement);
-        scopes.renameClassAndUsages(clazz, replacement);
-        comments.renameClassAndUsages(clazz, replacement);
-    }
-
-    @Override
-    public long getDeclarationOrder() {
-        return declarationOrder;
-    }
-
-    @Override
-    public void setDeclarationOrder(long declarationOrder) {
-        this.declarationOrder = declarationOrder;
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.izumi.haze.modules.impl.java.util.RenamingGenerator;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
@@ -20,11 +21,11 @@ public class RenameClassesStage implements JavaStage {
     @Override
     public File apply(@NonNull File file) {
         file = new File(file);
-        Map<Class, String> renamingMap = generateNameChangingMap(Map.of(new Object(), file));
+        Map<Class, String> rowRenamingMap = generateNameChangingMap(Map.of(new Object(), file));
+        Map<String, String> renamingMap = new HashMap<>();
+        rowRenamingMap.forEach((c, s) -> renamingMap.put(c.getName(), s));
 
-        for (Map.Entry<Class, String> entry : renamingMap.entrySet()) {
-            file.renameClassAndUsages(entry.getKey(), entry.getValue());
-        }
+        renamingMap.forEach(file::renameClassAndUsages);
 
         return file;
     }
@@ -32,14 +33,19 @@ public class RenameClassesStage implements JavaStage {
     @Override
     public Map<UUID, File> apply(@NonNull Map<UUID, File> files) {
         files = copy(files);
-        Map<Class, String> renamingMap = generateNameChangingMap(files);
+        Map<Class, String> rowRenamingMap = generateNameChangingMap(files);
+        Map<String, String> renamingMap = new HashMap<>();
+        rowRenamingMap.forEach((c, s) -> renamingMap.put(c.getName(), s));
+
         files.forEach((i, f) -> renamingMap.forEach(f::renameClassAndUsages));
+
         return files;
     }
 
     private Map<Class, String> generateNameChangingMap(Map<?, File> files) {
         Collection<Class> classes = new LinkedList<>();
         files.forEach((i, c) -> classes.addAll(c.getClasses()));
+
         return generator.generate(classes);
     }
 }

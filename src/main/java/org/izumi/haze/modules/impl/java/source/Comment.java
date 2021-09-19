@@ -20,8 +20,8 @@ public class Comment implements Element {
     }
 
     @Override
-    public void renameClassAndUsages(Class clazz, String replacement) {
-        value.replaceAllIfSeparate(clazz.getName(), replacement, new SeparatedStringPredicate());
+    public void renameClassAndUsages(String name, String replacement) {
+        value.replaceAllIfSeparate(name, replacement, new SeparatedStringPredicate());
     }
 
     @Override

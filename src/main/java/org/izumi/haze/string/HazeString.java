@@ -65,13 +65,19 @@ public class HazeString implements CharSequence {
                                      String toReplace,
                                      String replacement,
                                      Predicate<SeparatedString> predicate) {
-        int index = value.indexOf(toReplace, range.start);
-        while (index != -1 && index + toReplace.length() <= range.end) {
-            if (isSeparated(index, toReplace, predicate)) {
-                value.replace(index, index + toReplace.length(), replacement);
+        int diff = toReplace.length() - replacement.length();
+        int from = range.start;
+        while (true) {
+            int index = value.indexOf(toReplace, from);
+            if (index == -1 || index > range.end) {
+                break;
             }
 
-            index = value.indexOf(toReplace, index + toReplace.length());
+            from = index + toReplace.length();
+            if (isSeparated(index, toReplace, predicate)) {
+                value.replace(index, index + toReplace.length(), replacement);
+                range.shift(diff);
+            }
         }
     }
 
@@ -130,11 +136,11 @@ public class HazeString implements CharSequence {
     }
 
     private boolean isSeparated(int index, String toReplace, Predicate<SeparatedString> predicate) {
+        int beforeIndex = index > 0 ? index - 1 : 0;
         int afterIndex = index + toReplace.length();
-        char before = value.charAt(index - 1);
+        char before = value.charAt(beforeIndex);
         char after = value.charAt(afterIndex);
-        SeparatedString separatedString = new SeparatedString(before, after, toReplace);
-        return predicate.test(separatedString);
+        return predicate.test(new SeparatedString(before, after, toReplace));
     }
 
     private boolean matchesInverse(int index, String str) {

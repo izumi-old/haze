@@ -20,6 +20,7 @@ import org.izumi.haze.util.Range;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 
 public class File {
@@ -52,14 +53,15 @@ public class File {
         return new ArrayList<>(classes);
     }
 
-    public void renameClassAndUsages(Class clazz, String replacement) {
-        if (classes.contains(clazz) && clazz.isPublic()) {
+    public void renameClassAndUsages(String name, String replacement) {
+        Optional<Class> optional = classes.findByName(name);
+        if (optional.isPresent() && optional.get().isPublic()) {
             fileName = replacement;
         }
 
-        imports.renameClassAndUsages(clazz, replacement);
-        classes.renameClassAndUsages(clazz, replacement);
-        comments.renameClassAndUsages(clazz, replacement);
+        imports.renameClassAndUsages(name, replacement);
+        classes.renameClassAndUsages(name, replacement);
+        comments.renameClassAndUsages(name, replacement);
     }
 
     public void parse() {

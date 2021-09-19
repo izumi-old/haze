@@ -4,7 +4,7 @@ public interface Element extends Comparable<Element> {
     long getDeclarationOrder();
     void setDeclarationOrder(long order);
 
-    void renameClassAndUsages(Class clazz, String replacement);
+    void renameClassAndUsages(String name, String replacement);
 
     @Override
     default int compareTo(Element o) {
