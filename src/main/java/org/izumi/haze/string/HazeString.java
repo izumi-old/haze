@@ -1,19 +1,18 @@
-package org.izumi.haze.util;
+package org.izumi.haze.string;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.izumi.haze.util.Range;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 public class HazeString implements CharSequence {
-    private final Collection<Character> separated = List.of(' ', '.', '<', '>', '(', ';');
 
     @NonNull
     private final java.lang.StringBuilder value;
@@ -58,14 +57,17 @@ public class HazeString implements CharSequence {
         }
     }
 
-    public void replaceAllIfSeparate(String toReplace, String replacement) {
-        replaceAllIfSeparate(new Range(0, value.length() - 1), toReplace, replacement);
+    public void replaceAllIfSeparate(String toReplace, String replacement, Predicate<SeparatedString> predicate) {
+        replaceAllIfSeparate(new Range(value), toReplace, replacement, predicate);
     }
 
-    public void replaceAllIfSeparate(Range range, String toReplace, String replacement) {
+    public void replaceAllIfSeparate(Range range,
+                                     String toReplace,
+                                     String replacement,
+                                     Predicate<SeparatedString> predicate) {
         int index = value.indexOf(toReplace, range.start);
         while (index != -1 && index + toReplace.length() <= range.end) {
-            if (isSeparated(index, toReplace.length())) {
+            if (isSeparated(index, toReplace, predicate)) {
                 value.replace(index, index + toReplace.length(), replacement);
             }
 
@@ -127,11 +129,12 @@ public class HazeString implements CharSequence {
         return value.toString();
     }
 
-    private boolean isSeparated(int index, int length) {
-        int afterIndex = index + length;
+    private boolean isSeparated(int index, String toReplace, Predicate<SeparatedString> predicate) {
+        int afterIndex = index + toReplace.length();
         char before = value.charAt(index - 1);
         char after = value.charAt(afterIndex);
-        return separated.contains(before) && separated.contains(after);
+        SeparatedString separatedString = new SeparatedString(before, after, toReplace);
+        return predicate.test(separatedString);
     }
 
     private boolean matchesInverse(int index, String str) {
@@ -155,6 +158,6 @@ public class HazeString implements CharSequence {
 
     @Override
     public int hashCode() {
-        return Objects.hash(separated, value);
+        return Objects.hash(value);
     }
 }

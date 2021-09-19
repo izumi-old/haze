@@ -1,4 +1,7 @@
-package org.izumi.haze.util;
+package org.izumi.haze.string;
+
+import org.izumi.haze.util.Range;
+import org.izumi.haze.util.Ranges;
 
 import java.util.Optional;
 import java.util.regex.Matcher;

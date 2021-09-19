@@ -6,7 +6,7 @@ import org.izumi.haze.HazeException;
 import org.izumi.haze.modules.java.Keyword;
 import org.izumi.haze.modules.java.Type;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.HazeString;
 
 import java.util.Collection;
 import java.util.LinkedList;

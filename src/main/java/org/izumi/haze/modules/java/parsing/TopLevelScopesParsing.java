@@ -3,7 +3,7 @@ package org.izumi.haze.modules.java.parsing;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.modules.java.source.Scope;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.HazeString;
 
 import java.util.SortedMap;
 import java.util.TreeMap;

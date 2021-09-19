@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.izumi.haze.modules.java.Keyword;
 import org.izumi.haze.modules.java.source.Import;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.HazeString;
 
 import java.util.SortedMap;
 import java.util.TreeMap;

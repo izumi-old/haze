@@ -3,8 +3,8 @@ package org.izumi.haze.modules.java.parsing;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.modules.java.source.Comment;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.Regex;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.Regex;
+import org.izumi.haze.string.HazeString;
 
 import java.util.Optional;
 import java.util.SortedMap;

@@ -3,7 +3,7 @@ package org.izumi.haze.modules.java.source;
 import org.izumi.haze.modules.java.util.Classes;
 import org.izumi.haze.modules.java.util.Scopes;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.HazeString;
 
 import java.util.Collection;
 

@@ -14,7 +14,7 @@ import org.izumi.haze.modules.java.util.impl.ElementsImpl;
 import org.izumi.haze.modules.java.util.impl.HazeStringBuilder;
 import org.izumi.haze.modules.java.util.impl.ImportsImpl;
 import org.izumi.haze.modules.java.util.impl.RangeMap;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.HazeString;
 import org.izumi.haze.util.Range;
 
 import java.util.ArrayList;

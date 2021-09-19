@@ -1,4 +1,4 @@
-package org.izumi.haze.util;
+package org.izumi.haze.string;
 
 import lombok.RequiredArgsConstructor;
 

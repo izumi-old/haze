@@ -1,7 +1,8 @@
 package org.izumi.haze.modules.java.source;
 
 import lombok.RequiredArgsConstructor;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.HazeString;
+import org.izumi.haze.string.SeparatedStringPredicate;
 
 @RequiredArgsConstructor
 public class Import implements Element {
@@ -20,7 +21,7 @@ public class Import implements Element {
 
     @Override
     public void renameClassAndUsages(Class clazz, String replacement) {
-        value.replaceAllIfSeparate(clazz.getName(), replacement);
+        value.replaceAllIfSeparate(clazz.getName(), replacement, new SeparatedStringPredicate());
     }
 
     @Override

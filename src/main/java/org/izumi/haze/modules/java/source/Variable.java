@@ -1,7 +1,7 @@
 package org.izumi.haze.modules.java.source;
 
 import lombok.RequiredArgsConstructor;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.HazeString;
 
 @RequiredArgsConstructor
 public class Variable implements Element {

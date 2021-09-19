@@ -17,7 +17,8 @@ import org.izumi.haze.modules.java.util.impl.HazeStringBuilder;
 import org.izumi.haze.modules.java.util.impl.RangeMap;
 import org.izumi.haze.modules.java.util.impl.ScopesImpl;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.HazeString;
+import org.izumi.haze.string.HazeString;
+import org.izumi.haze.string.SeparatedStringPredicate;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -110,7 +111,7 @@ public class Class implements Element {
         if (name.equals(clazz.getName())) {
             name = replacement;
         }
-        value.replaceAllIfSeparate(clazz.getName(), replacement);
+        value.replaceAllIfSeparate(clazz.getName(), replacement, new SeparatedStringPredicate());
 
         classes.renameClassAndUsages(clazz, replacement);
         scopes.renameClassAndUsages(clazz, replacement);

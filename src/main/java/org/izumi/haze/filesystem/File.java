@@ -2,13 +2,12 @@ package org.izumi.haze.filesystem;
 
 import lombok.NonNull;
 import org.izumi.haze.modules.Content;
-import org.izumi.haze.util.StringUtils;
+import org.izumi.haze.string.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
