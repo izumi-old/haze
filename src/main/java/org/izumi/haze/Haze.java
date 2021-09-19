@@ -13,8 +13,8 @@ public class Haze {
         ApplicationContext context = new AnnotationConfigApplicationContext("org.izumi.haze");
 
         Home home = context.getBean(Home.class);
-        //home.createIfNotExists();
-        //home.clear();
+        home.createIfNotExists();
+        home.clear();
 
         Collection<String> packagesToHandle = List.of("/home/aiden/IdeaProjects/LifeTraceHelp (copy)",
                 System.getProperty("user.dir") + "/src");
