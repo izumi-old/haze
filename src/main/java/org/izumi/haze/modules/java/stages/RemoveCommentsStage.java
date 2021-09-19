@@ -1,7 +1,7 @@
 package org.izumi.haze.modules.java.stages;
 
 import lombok.NonNull;
-import org.izumi.haze.modules.java.source.Code;
+import org.izumi.haze.modules.java.source.File;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -11,7 +11,12 @@ import java.util.UUID;
 public class RemoveCommentsStage implements JavaStage {
 
     @Override
-    public Map<UUID, Code> applyCode(@NonNull Map<UUID, Code> code) {
-        return code;
+    public File apply(@NonNull File file) {
+        return file;
+    }
+
+    @Override
+    public Map<UUID, File> apply(@NonNull Map<UUID, File> files) {
+        return files;
     }
 }

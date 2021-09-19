@@ -1,12 +1,12 @@
 package org.izumi.haze.util;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Random;
 
-public class RandomList<T> extends ArrayList<T> {
-    private final Random random = new SecureRandom();
+public class RandomList<T> extends LinkedList<T> {
+    protected final Random random = new SecureRandom();
 
     public RandomList() {
     }
@@ -17,5 +17,15 @@ public class RandomList<T> extends ArrayList<T> {
 
     public T getRandom() {
         return get(random.nextInt(size()));
+    }
+
+    /**
+     * Retrieves and removes a random element of the list
+     */
+    public T extractRandom() {
+        int index = random.nextInt(size());
+        T element = get(index);
+        remove(index);
+        return element;
     }
 }

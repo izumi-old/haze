@@ -50,7 +50,7 @@ public class Parsing {
                 } else if (java.nio.file.Files.isDirectory(sourcePath)) {
                     handleDirectory(toSave, sourcePath);
                 } else {
-                    log.warn("Cannot determine type of the given type (is it a directory or a regular file?)");
+                    log.warn("Cannot determine typeEnum of the given typeEnum (is it a directory or a regular file?)");
                 }
             } catch (IllegalPathStateException ex) {
                 log.warn("One of the given wishes is invalid. The wish: " + anInput);

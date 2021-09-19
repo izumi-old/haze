@@ -8,6 +8,7 @@ public enum Keyword {
     ANNOTATION("@interface"),
     ENUM("enum"),
     STATIC("static"),
+    ABSTRACT("abstract"),
     FINAL("final"),
     PUBLIC("public"),
     PRIVATE("private"),
@@ -34,7 +35,8 @@ public enum Keyword {
     WHILE("while"),
     BREAK("break"),
     SWITCH("switch"),
-    CASE("case");
+    CASE("case"),
+    DEFAULT_ACCESS_MODIFIER("");
 
     public static Optional<Keyword> of(String value) {
         for (Keyword keyword : Keyword.values()) {

@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.izumi.haze.util.HazeString;
 
 @RequiredArgsConstructor
-public class Variable implements Element {
+public class Package implements Element {
+    public static final Package DEFAULT_PACKAGE = new Package(new HazeString(""));
     private final HazeString string;
     private long declarationOrder;
 
@@ -21,6 +22,14 @@ public class Variable implements Element {
     @Override
     public void renameClassAndUsages(Class clazz, String replacement) {
         //TODO:
+    }
+
+    public boolean isDefault() {
+        return string.equals(new HazeString(""));
+    }
+
+    public boolean isNotDefault() {
+        return !isDefault();
     }
 
     @Override

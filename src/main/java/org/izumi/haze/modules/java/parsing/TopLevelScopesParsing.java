@@ -2,21 +2,24 @@ package org.izumi.haze.modules.java.parsing;
 
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.modules.java.source.Scope;
-import org.izumi.haze.modules.java.util.Scopes;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.StringBuilder;
+import org.izumi.haze.util.HazeString;
+
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @RequiredArgsConstructor
 public class TopLevelScopesParsing {
-    private final StringBuilder value;
+    private final HazeString value;
     private final Range range;
 
-    public Scopes parse() {
+    public SortedMap<Range, Scope> parse() {
         int metUnresolvedOpening = -1;
         int start = -1;
         int end;
-        Scopes result = new Scopes();
-        for (int i = range.start; i < range.end; i++) {
+
+        SortedMap<Range, Scope> map = new TreeMap<>();
+        for (int i = range.start; i <= range.end; i++) {
             char c = value.charAt(i);
             if (c == '{') {
                 if (metUnresolvedOpening == -1) {
@@ -33,7 +36,7 @@ public class TopLevelScopesParsing {
 
                     Range range = new Range(start, end);
                     if (isScope(range)) {
-                        result.add(new Scope(value, range));
+                        map.put(range, new Scope(value, range));
                     }
                     metUnresolvedOpening = -1;
                 } else {
@@ -42,7 +45,7 @@ public class TopLevelScopesParsing {
             }
         }
 
-        return result;
+        return map;
     }
 
     private boolean isScope(Range range) {

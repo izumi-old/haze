@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.izumi.haze.util.HazeString;
 
 @RequiredArgsConstructor
-public class Variable implements Element {
-    private final HazeString string;
+public class Comment implements Element {
+    private final HazeString value;
     private long declarationOrder;
 
     @Override
@@ -20,11 +20,11 @@ public class Variable implements Element {
 
     @Override
     public void renameClassAndUsages(Class clazz, String replacement) {
-        //TODO:
+        value.replaceAllIfSeparate(clazz.getName(), replacement);
     }
 
     @Override
     public String toString() {
-        return string.toString();
+        return value.toString();
     }
 }

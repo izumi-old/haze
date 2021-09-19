@@ -1,4 +1,20 @@
 package org.izumi.haze.modules.java.source;
 
-public class Annotation {
+public class Annotation implements Element {
+    private long declarationOrder;
+
+    @Override
+    public long getDeclarationOrder() {
+        return declarationOrder;
+    }
+
+    @Override
+    public void setDeclarationOrder(long order) {
+        this.declarationOrder = order;
+    }
+
+    @Override
+    public void renameClassAndUsages(Class clazz, String replacement) {
+        //TODO:
+    }
 }

@@ -6,7 +6,7 @@ import org.izumi.haze.HazeException;
 import org.izumi.haze.modules.java.Keyword;
 import org.izumi.haze.modules.java.Type;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.StringBuilder;
+import org.izumi.haze.util.HazeString;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class Recognition {
 
     @NonNull
-    private final StringBuilder value;
+    private final HazeString value;
 
     @NonNull
     private final Range bracesRange;
@@ -78,7 +78,7 @@ public class Recognition {
                 return ANNOTATION;
             }
 
-            throw new HazeException("An unknown type was given. The type: " + type);
+            throw new HazeException("An unknown typeEnum was given. The typeEnum: " + type);
         }
     }
 }

@@ -5,14 +5,14 @@ import lombok.NonNull;
 import java.util.Optional;
 
 public enum AccessModifier {
-    PUBLIC(Keyword.PUBLIC.toString()),
-    DEFAULT(""),
-    PROTECTED(Keyword.PROTECTED.toString()),
-    PRIVATE(Keyword.PRIVATE.toString());
+    PUBLIC(Keyword.PUBLIC),
+    DEFAULT(Keyword.DEFAULT_ACCESS_MODIFIER),
+    PROTECTED(Keyword.PROTECTED),
+    PRIVATE(Keyword.PRIVATE);
 
     public static Optional<AccessModifier> of(@NonNull String value) {
         for (AccessModifier modifier : AccessModifier.values()) {
-            if (modifier.value.equals(value)) {
+            if (modifier.toString().equals(value)) {
                 return Optional.of(modifier);
             }
         }
@@ -20,14 +20,18 @@ public enum AccessModifier {
         return Optional.empty();
     }
 
-    AccessModifier(String value) {
-        this.value = value;
+    AccessModifier(Keyword keyword) {
+        this.keyword = keyword;
     }
 
-    private final String value;
+    private final Keyword keyword;
+
+    public Keyword getKeyword() {
+        return keyword;
+    }
 
     @Override
     public String toString() {
-        return value;
+        return keyword.toString();
     }
 }

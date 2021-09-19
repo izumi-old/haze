@@ -2,10 +2,26 @@ package org.izumi.haze.modules.java.source;
 
 import java.util.Collection;
 
-public class Method {
+public class Method implements Element {
     private Collection<Class> topLevelClasses;
     private Collection<Scope> topLevelScopes;
     private Collection<Variable> variables;
+    private long declarationOrder;
+
+    @Override
+    public long getDeclarationOrder() {
+        return declarationOrder;
+    }
+
+    @Override
+    public void setDeclarationOrder(long order) {
+        this.declarationOrder = order;
+    }
+
+    @Override
+    public void renameClassAndUsages(Class clazz, String replacement) {
+        //TODO:
+    }
 
     /*
     how can I detect a method?

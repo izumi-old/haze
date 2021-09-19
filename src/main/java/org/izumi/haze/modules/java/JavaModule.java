@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.izumi.haze.filesystem.Extension;
 import org.izumi.haze.modules.Content;
 import org.izumi.haze.modules.Module;
+import org.izumi.haze.modules.java.source.File;
 import org.izumi.haze.modules.java.stages.JavaStage;
-import org.izumi.haze.modules.stages.Stage;
+import org.izumi.haze.util.Utils;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -25,21 +26,29 @@ public class JavaModule implements Module {
 
     @Override
     public Content handle(@NonNull Content content) {
-        Content result = content;
-        for (Stage stage : stages) {
-            result = stage.apply(content);
+        File file = new File(content);
+
+        file.parse();
+
+        for (JavaStage stage : stages) {
+            file = stage.apply(file);
         }
 
-        return result;
+        return file.toContent();
     }
 
     @Override
     public Map<UUID, Content> handle(@NonNull Map<UUID, Content> contents) {
-        Map<UUID, Content> result = contents;
-        for (Stage stage : stages) {
-            result = stage.apply(contents);
+        Map<UUID, File> files = Utils.map(contents, File::new);
+
+        for (Map.Entry<UUID, File> entry : files.entrySet()) {
+            entry.getValue().parse();
         }
 
-        return result;
+        for (JavaStage stage : stages) {
+            files = stage.apply(files);
+        }
+
+        return Utils.map(files, File::toContent);
     }
 }
