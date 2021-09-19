@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -24,6 +25,18 @@ public abstract class File extends Element {
         super(path);
         if (Files.exists(path) && !Files.isRegularFile(path)) {
             throw new FilesystemException("Given path is not a file. Given: " + path);
+        }
+    }
+
+    @Override
+    public void delete() {
+        try {
+            if (Files.exists(this.path)) {
+                Files.delete(this.path);
+            }
+
+        } catch (IOException ex) {
+            throw new FilesystemException("An error occurred while deleting a file", ex);
         }
     }
 

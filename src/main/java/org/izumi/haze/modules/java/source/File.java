@@ -52,16 +52,14 @@ public class File {
         return new ArrayList<>(classes);
     }
 
-    public void renameImports(Class clazz, String replacement) {
-        imports.renameClassAndUsages(clazz, replacement);
-    }
-
     public void renameClassAndUsages(Class clazz, String replacement) {
         if (classes.contains(clazz) && clazz.isPublic()) {
             fileName = replacement;
         }
 
+        imports.renameClassAndUsages(clazz, replacement);
         classes.renameClassAndUsages(clazz, replacement);
+        comments.renameClassAndUsages(clazz, replacement);
     }
 
     public void parse() {

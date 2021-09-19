@@ -12,4 +12,6 @@ public abstract class Element {
     public Element(@NonNull Path path) {
         this.path = path;
     }
+
+    public abstract void delete();
 }

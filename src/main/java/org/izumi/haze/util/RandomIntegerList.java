@@ -18,4 +18,17 @@ public class RandomIntegerList extends RandomList<Integer> {
 
         return this;
     }
+
+    public RandomIntegerList fillValuesRangeInclude(Range range) {
+        for (int i = range.start; i < range.end; i++) {
+            add(i);
+        }
+
+        return this;
+    }
+
+    public RandomIntegerList add(int i) {
+        super.add(i);
+        return this;
+    }
 }
