@@ -65,5 +65,7 @@ public class HazeStringTest {
         assert string.countOccurrences("know", new Range(2, 5)) == 1;
         assert string.countOccurrences("Ik") == 0;
         assert string.countOccurrences("I", new Range(1, 1)) == 0;
+        assert string.countOccurrences(" ", new Range(0, 1)) == 1;
+        assert string.countOccurrences(" ", new Range(1, 2)) == 1;
     }
 }

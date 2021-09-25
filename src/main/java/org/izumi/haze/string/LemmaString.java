@@ -10,11 +10,15 @@ public class LemmaString extends HazeString {
     }
 
     @Override
-    public LemmaString getSub(Range range) {
+    public LemmaString getSub(Range range) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
+
         return new LemmaString(string.substring(range.start, range.end + 1));
     }
 
-    public Optional<LemmaString> getLemmaBefore(Range range) {
+    public Optional<LemmaString> getLemmaBefore(Range range) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
+
         Range borders = new Range(this.range.start, range.start > 0 ? range.start - 1 : 0);
         int spaces = countOccurrences(" ", borders);
         if (spaces == 0) {
@@ -31,19 +35,9 @@ public class LemmaString extends HazeString {
             if (end < borders.start) {
                 return Optional.empty();
             }
-            int start = lastRangeOf(" ", new Range(borders.start, end)).get().start;
+            int start = lastRangeOf(" ", new Range(borders.start, end)).get().start + 1;
 
             return Optional.of(getSub(new Range(start, end)));
         }
-    }
-
-    public static void main(String[] args) {
-        String s = "a a  leamm3";
-        LemmaString lemmaString = new LemmaString(s);
-
-        Range range = new Range(4, 5);
-        System.out.println("Given range: {" + lemmaString.getSub(range) + "}");
-
-        System.out.println("Result: " + lemmaString.getLemmaBefore(range));
     }
 }

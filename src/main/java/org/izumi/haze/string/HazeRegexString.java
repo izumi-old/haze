@@ -18,7 +18,9 @@ public class HazeRegexString extends HazeString {
         return firstRangeOfRegex(new Range(this), regex);
     }
 
-    public Optional<Range> firstRangeOfRegex(Range inRange, Regex regex) {
+    public Optional<Range> firstRangeOfRegex(Range inRange, Regex regex) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(inRange);
+
         Pattern pattern = Pattern.compile(regex.toString());
         Matcher matcher = pattern.matcher(string).region(inRange.start, inRange.end + 1);
         if (matcher.find()) {
@@ -32,7 +34,9 @@ public class HazeRegexString extends HazeString {
         return rangesOfRegex(range, regex);
     }
 
-    public CompareList<Range> rangesOfRegex(Range inRange, Regex regex) {
+    public CompareList<Range> rangesOfRegex(Range inRange, Regex regex) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(inRange);
+
         Pattern pattern = Pattern.compile(regex.toString());
         Matcher matcher = pattern.matcher(string).region(inRange.start, inRange.end + 1);
         CompareList<Range> ranges = new CompareList<>();
@@ -48,7 +52,9 @@ public class HazeRegexString extends HazeString {
     }
 
     @Override
-    public HazeRegexString getSub(Range range) {
+    public HazeRegexString getSub(Range range) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
+
         return new HazeRegexString(string.substring(range.start, range.end + 1));
     }
 
@@ -63,7 +69,9 @@ public class HazeRegexString extends HazeString {
     public HazeRegexString replaceAllIf(Range range,
                                         Regex regex,
                                         String replacement,
-                                        Predicate<SeparatedString> predicate) {
+                                        Predicate<SeparatedString> predicate) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
+
         Pattern pattern = Pattern.compile(regex.toString());
         Matcher matcher = pattern.matcher(string);
         ExtendedList<Range> replaceRanges = new ExtendedList<>();
@@ -78,7 +86,7 @@ public class HazeRegexString extends HazeString {
             Range replaceRange = replaceRanges.get(i);
             result.replace(replaceRange.start, replaceRange.end, replacement);
             for (int j = i; j < replaceRanges.size(); j++) {
-                replaceRanges.update(j, range1 -> range1.shift((int) replaceRange.getLength()));
+                replaceRanges.update(j, range1 -> range1.shift((int) replaceRange.getLength() - replacement.length()));
             }
         }
 

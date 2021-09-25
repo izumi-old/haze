@@ -12,9 +12,8 @@ public class HazeString extends HazeCharSequence {
     }
 
     public HazeString getSub(Range range) throws IndexOutOfBoundsException {
-        if (range.end + 1 > length()) {
-            throw new IndexOutOfBoundsException(range.end + " is out of bounds");
-        }
+        validateRangeToOperateIn(range);
+
         return new HazeString(string.substring(range.start, range.end + 1));
     }
 
@@ -22,11 +21,15 @@ public class HazeString extends HazeCharSequence {
         return firstRangeOf(sequence, range);
     }
 
-    public Optional<Range> firstRangeOf(CharSequence sequence, int fromIndex) {
+    public Optional<Range> firstRangeOf(CharSequence sequence, int fromIndex) throws IndexOutOfBoundsException {
+        validateFromIndexToOperateIn(fromIndex);
+
         return firstRangeOf(sequence, new Range(fromIndex, range.end));
     }
 
-    public Optional<Range> firstRangeOf(CharSequence sequence, Range range) {
+    public Optional<Range> firstRangeOf(CharSequence sequence, Range range) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
+
         int index = firstIndexOf(sequence, range);
         if (index == -1 || index + sequence.length() - 1 > range.end) {
             return Optional.empty();
@@ -35,7 +38,10 @@ public class HazeString extends HazeCharSequence {
         return Optional.of(new Range(index, index + sequence.length() - 1));
     }
 
-    public Optional<Range> firstRangeOf(Collection<CharSequence> sequences, int fromIndex) {
+    public Optional<Range> firstRangeOf(Collection<CharSequence> sequences, int fromIndex)
+            throws IndexOutOfBoundsException {
+        validateFromIndexToOperateIn(fromIndex);
+
         CompareList<Range> ranges = new CompareList<>();
         sequences.forEach(sequence -> firstRangeOf(sequence, fromIndex).ifPresent(ranges::add));
 
@@ -46,7 +52,9 @@ public class HazeString extends HazeCharSequence {
         return lastRangeOf(sequence, range);
     }
 
-    public Optional<Range> lastRangeOf(CharSequence sequence, Range inRange) {
+    public Optional<Range> lastRangeOf(CharSequence sequence, Range inRange) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(inRange);
+
         String str = sequence.toString();
         char lastChar = str.charAt(str.length() - 1);
         for (int i = inRange.end ; i >= inRange.start; i--) {
@@ -61,7 +69,10 @@ public class HazeString extends HazeCharSequence {
         return Optional.empty();
     }
 
-    public Optional<Range> lastRangeOf(Collection<CharSequence> sequences, Range inRange) {
+    public Optional<Range> lastRangeOf(Collection<CharSequence> sequences, Range inRange)
+            throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(inRange);
+
         CompareList<Range> ranges = new CompareList<>();
         sequences.forEach(sequence -> lastRangeOf(sequence, inRange).ifPresent(ranges::add));
         return ranges.getMax();
@@ -71,7 +82,9 @@ public class HazeString extends HazeCharSequence {
         return contains(sequence, range);
     }
 
-    public boolean contains(CharSequence sequence, Range inRange) {
+    public boolean contains(CharSequence sequence, Range inRange) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(inRange);
+
         return firstRangeOf(sequence, inRange).isPresent();
     }
 
@@ -79,25 +92,43 @@ public class HazeString extends HazeCharSequence {
         return countOccurrences(sequence, range);
     }
 
-    public int countOccurrences(CharSequence sequence, Range range) {
-        int index;
+    public int countOccurrences(CharSequence sequence, Range range) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
+
         int result = 0;
         while (true) {
-            index = firstIndexOf(sequence, range);
-            if (index == -1 || index >= range.end - 1) {
+            Optional<Range> rangeOptional = firstRangeOf(sequence, range);
+            if (rangeOptional.isEmpty()) {
                 break;
             }
 
-            range = new Range(index + 1, range.end);
             result++;
+            Range range1 = rangeOptional.get();
+            if (range1.end + 1 > range.end) {
+                break;
+            }
+
+            range = new Range(range1.end + 1, range.end);
         }
 
         return result;
     }
 
+    protected void validateFromIndexToOperateIn(int fromIndex) throws IndexOutOfBoundsException {
+        if (fromIndex < 0 || fromIndex > range.end) {
+            throw new IndexOutOfBoundsException("Given index is out of bounds. Given: " + fromIndex);
+        }
+    }
+
+    protected void validateRangeToOperateIn(Range range) throws IndexOutOfBoundsException {
+        if (range.end > this.range.end) {
+            throw new IndexOutOfBoundsException("Given range is out of bounds. The range: " + range);
+        }
+    }
+
     private int firstIndexOf(CharSequence sequence, Range inRange) {
         int index = string.indexOf(sequence.toString(), inRange.start);
-        return inRange.doesNotContain(index) ? -1 : index;
+        return inRange.doesNotContain(new Range(index, index + sequence.length() - 1)) ? -1 : index;
     }
 
     private boolean matchesInverse(int index, String str) {
