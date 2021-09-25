@@ -1,5 +1,7 @@
 package org.izumi.haze.modules.impl.java.source;
 
+import org.izumi.haze.string.HazeString;
+
 import java.util.Optional;
 
 public enum Keyword {
@@ -46,6 +48,10 @@ public enum Keyword {
         }
 
         return Optional.empty();
+    }
+
+    public static Optional<Keyword> of(HazeString string) {
+        return of(string.toString());
     }
 
     private final String value;

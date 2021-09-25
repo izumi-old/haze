@@ -16,8 +16,9 @@ public class Haze {
         home.createIfNotExists();
         home.clear();
 
-        Collection<String> packagesToHandle = List.of("/home/aiden/IdeaProjects/LifeTraceHelp (copy)",
-                System.getProperty("user.dir") + "/src");
+        Collection<String> packagesToHandle = List.of("/home/aiden/IdeaProjects/sample");
+        /*Collection<String> packagesToHandle = List.of("/home/aiden/IdeaProjects/LifeTraceHelp (copy)",
+                System.getProperty("user.dir") + "/src");*/
         Obfuscation obfuscation = new Obfuscation(context.getBean(ModuleFactory.class), packagesToHandle);
         obfuscation.launch();
     }

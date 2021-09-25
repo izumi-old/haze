@@ -1,15 +1,30 @@
 package org.izumi.haze.util;
 
-import lombok.RequiredArgsConstructor;
+import java.util.Objects;
 
-@RequiredArgsConstructor
 public class Range implements Comparable<Range> {
     public static final Range EMPTY_RANGE = new Range(0, 0);
     public final int start;
     public final int end;
 
+    /**
+     * @param start - value, beginning index, include
+     * @param end = value, ending index, include
+     */
+    public Range(int start, int end) {
+        if (end < start) {
+            throw new IllegalArgumentException("End is smaller than start. End: " + end + ". Start: " + start);
+        }
+        this.start = start;
+        this.end = end;
+    }
+
     public Range(CharSequence sequence) {
         this(0, sequence.length() - 1);
+    }
+
+    public Range(Range range) {
+        this(range.start, range.end);
     }
 
     @Override
@@ -38,6 +53,24 @@ public class Range implements Comparable<Range> {
         return start <= range.start && end >= range.end;
     }
 
+    public boolean contains(int i) {
+        return i >= start && i <= end;
+    }
+
+    public boolean doesNotContain(int i) {
+        return !contains(i);
+    }
+
+    public boolean doesNotContainAny(int... is) {
+        for (int i : is) {
+            if (contains(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public Range shift(int changed) {
         if (changed > end) {
             throw new IllegalArgumentException("Cannot shift because length of range is too small");
@@ -52,5 +85,23 @@ public class Range implements Comparable<Range> {
 
     public boolean isEmpty() {
         return start == 0 && end == 0;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[%d;%d]", start, end);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Range range = (Range) o;
+        return start == range.start && end == range.end;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end);
     }
 }

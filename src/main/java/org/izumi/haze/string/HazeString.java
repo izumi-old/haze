@@ -1,103 +1,89 @@
 package org.izumi.haze.string;
 
+import org.izumi.haze.util.ExtendedList;
 import org.izumi.haze.util.Range;
 
-import java.util.Objects;
+import java.util.Collection;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
-public class HazeString implements CharSequence {
-    protected final java.lang.StringBuilder value;
-
-    public HazeString(CharSequence value) {
-        this.value = new java.lang.StringBuilder(value);
+public class HazeString extends HazeCharSequence {
+    public HazeString(CharSequence sequence) {
+        super(sequence);
     }
 
-    @Override
-    public CharSequence subSequence(int start, int end) {
-        return value.subSequence(start, end);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return value.isEmpty();
-    }
-
-    @Override
-    public IntStream chars() {
-        return value.chars();
-    }
-
-    @Override
-    public char charAt(int index) {
-        return value.charAt(index);
-    }
-
-    public String substring(Range range) {
-        return value.substring(range.start, range.end);
-    }
-
-    public HazeString sub(Range range) {
-        return new HazeString(value.substring(range.start, range.end + 1));
-    }
-
-    public void deleteAll(String toReplace) {
-        int index = value.indexOf(toReplace, 0);
-        while (index != -1 && index + toReplace.length() <= length()) {
-            value.replace(index, index + toReplace.length(), "");
-            index = value.indexOf(toReplace, index + toReplace.length());
+    public HazeString getSub(Range range) throws IndexOutOfBoundsException {
+        if (range.end + 1 > length()) {
+            throw new IndexOutOfBoundsException(range.end + " is out of bounds");
         }
+        return new HazeString(string.substring(range.start, range.end + 1));
     }
 
-    public void replaceAllIfSeparate(String toReplace, String replacement, Predicate<SeparatedString> predicate) {
-        replaceAllIfSeparate(new Range(value), toReplace, replacement, predicate);
+    public HazeString replaceAllIf(String toReplace, String replacement, Predicate<SeparatedString> predicate) {
+        return replaceAllIf(range, toReplace, replacement, predicate);
     }
 
-    public void replaceAllIfSeparate(Range range,
-                                     String toReplace,
-                                     String replacement,
-                                     Predicate<SeparatedString> predicate) {
+    public HazeString replaceAllIf(Range range,
+                                   String toReplace,
+                                   String replacement,
+                                   Predicate<SeparatedString> predicate) {
         int diff = toReplace.length() - replacement.length();
         int from = range.start;
+        String result = string;
         while (true) {
-            int index = value.indexOf(toReplace, from);
+            int index = firstIndexOf(toReplace, from);
             if (index == -1 || index > range.end) {
                 break;
             }
 
             from = index + toReplace.length();
             if (isSeparated(index, toReplace, predicate)) {
-                value.replace(index, index + toReplace.length(), replacement);
+                result = result.substring(0, index) + replacement +
+                        result.substring(index + toReplace.length(), replacement.length());
                 range.shift(diff);
             }
         }
+
+        return new HazeString(result);
     }
 
-    public int indexOf(String str) {
-        return value.indexOf(str);
+    public int firstIndexOf(CharSequence sequence) {
+        return firstIndexOf(sequence, range);
     }
 
-    public int indexOf(String str, int fromIndex) {
-        return value.indexOf(str, fromIndex);
+    public int firstIndexOf(CharSequence sequence, int fromIndex) {
+        return firstIndexOf(sequence, new Range(fromIndex, range.end));
     }
 
-    public int firstIndexOf(String str) {
-        return value.indexOf(str);
+    public int firstIndexOf(Collection<CharSequence> sequences, int fromIndex) {
+        ExtendedList<Integer> indexes = new ExtendedList<>();
+        for (CharSequence sequence : sequences) {
+            int index = firstIndexOf(sequence, fromIndex);
+            if (index != -1) {
+                indexes.add(index);
+            }
+        }
+
+        return indexes.getMin().orElse(-1);
     }
 
-    public int lastIndexOf(String str) {
-        return value.lastIndexOf(str);
+    public int firstIndexOf(CharSequence sequence, Range inRange) {
+        int index = string.indexOf(sequence.toString(), inRange.start);
+        return index <= inRange.end ? index : -1;
     }
 
-    public int firstIndexOf(String str, Range inRange) {
-        int index = value.indexOf(str, inRange.start);
-        return index < inRange.end ? index : -1;
+    public int lastIndexOf(CharSequence sequence) {
+        return lastIndexOf(sequence, range);
     }
 
-    public int lastIndexOf(String str, Range inRange) {
+    public int lastIndexOf(CharSequence sequence, int fromIndex) {
+        return lastIndexOf(sequence, new Range(fromIndex, range.end));
+    }
+
+    public int lastIndexOf(CharSequence sequence, Range inRange) {
+        String str = sequence.toString();
         char lastChar = str.charAt(str.length() - 1);
-        for (int i = inRange.end - 1 ; i > inRange.start; i--) {
-            boolean probablyEndOfSearched = value.charAt(i) == lastChar;
+        for (int i = inRange.end ; i >= inRange.start; i--) {
+            boolean probablyEndOfSearched = string.charAt(i) == lastChar;
             if (probablyEndOfSearched) {
                 if (matchesInverse(i, str)) {
                     return i - str.length() + 1;
@@ -108,44 +94,62 @@ public class HazeString implements CharSequence {
         return -1;
     }
 
-    public int length() {
-        return value.length();
+    public int lastIndexOf(Collection<CharSequence> sequences, Range inRange) {
+        ExtendedList<Integer> indexes = new ExtendedList<>();
+        for (CharSequence sequence : sequences) {
+            int index = lastIndexOf(sequence, inRange);
+            if (index != -1) {
+                indexes.add(index);
+            }
+        }
+
+        return indexes.getMax().orElse(-1);
     }
 
-    @Override
-    public String toString() {
-        return value.toString();
+    public boolean contains(CharSequence sequence) {
+        return contains(sequence, range);
+    }
+
+    public boolean contains(CharSequence sequence, Range inRange) {
+        return firstIndexOf(sequence, inRange) != -1;
+    }
+
+    public int countOccurrences(CharSequence sequence) {
+        return countOccurrences(sequence, range);
+    }
+
+    public int countOccurrences(CharSequence sequence, Range range) {
+        int index;
+        int result = 0;
+        while (true) {
+            index = firstIndexOf(sequence, range);
+            if (index == -1 || index >= range.end - 1) {
+                break;
+            }
+
+            range = new Range(index + 1, range.end);
+            result++;
+        }
+
+        return result;
     }
 
     private boolean isSeparated(int index, String toReplace, Predicate<SeparatedString> predicate) {
         int beforeIndex = index > 0 ? index - 1 : 0;
         int afterIndex = index + toReplace.length();
-        char before = value.charAt(beforeIndex);
-        char after = value.charAt(afterIndex);
+        char before = charAt(beforeIndex);
+        char after = charAt(afterIndex);
         return predicate.test(new SeparatedString(before, after, toReplace));
     }
 
     private boolean matchesInverse(int index, String str) {
         for (int j = str.length() - 2, k = 1; j > 0; j--, k++) {
-            char c1 = value.charAt(index + k);
+            char c1 = charAt(index + k);
             char c2 = str.charAt(j);
             if (c1 != c2) {
                 return false;
             }
         }
         return true;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HazeString that = (HazeString) o;
-        return value.equals(that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
     }
 }

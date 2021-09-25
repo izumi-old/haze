@@ -3,6 +3,7 @@ package org.izumi.haze.modules.impl.java.parsing;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.modules.impl.java.source.Keyword;
 import org.izumi.haze.modules.impl.java.source.Package;
+import org.izumi.haze.string.HazeRegexString;
 import org.izumi.haze.string.HazeString;
 import org.izumi.haze.util.Range;
 
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class PackageParsing {
-    private final HazeString string;
+    private final HazeRegexString string;
 
     public SortedMap<Range, Package> parse() {
         Pattern pattern = Pattern.compile(Keyword.PACKAGE + ".*;");
@@ -24,8 +25,7 @@ public class PackageParsing {
         Package aPackage;
         if (matcher.find()) {
             range = new Range(matcher.start(), matcher.end());
-            HazeString string = this.string.sub(range);
-            string.deleteAll("\n");
+            HazeString string = this.string.getSub(range).deleteAll("\n");
             aPackage = new Package(string);
         } else {
             range = Range.EMPTY_RANGE;

@@ -1,10 +1,9 @@
 package org.izumi.haze.util;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Optional;
 
-public class Ranges extends LinkedList<Range> {
+public class Ranges extends ExtendedList<Range> {
     public Optional<Range> getLastRange() {
         if (isEmpty()) {
             return Optional.empty();

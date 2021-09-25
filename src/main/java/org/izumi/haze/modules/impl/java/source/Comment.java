@@ -1,13 +1,15 @@
 package org.izumi.haze.modules.impl.java.source;
 
-import lombok.RequiredArgsConstructor;
 import org.izumi.haze.string.HazeString;
 import org.izumi.haze.string.SeparatedStringPredicate;
 
-@RequiredArgsConstructor
 public class Comment implements Element {
-    private final HazeString value;
+    private HazeString value;
     private long declarationOrder;
+
+    public Comment(HazeString value) {
+        this.value = value;
+    }
 
     @Override
     public long getDeclarationOrder() {
@@ -21,7 +23,7 @@ public class Comment implements Element {
 
     @Override
     public void renameClassAndUsages(String name, String replacement) {
-        value.replaceAllIfSeparate(name, replacement, new SeparatedStringPredicate());
+        value = value.replaceAllIf(name, replacement, new SeparatedStringPredicate());
     }
 
     @Override

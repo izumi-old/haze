@@ -49,6 +49,6 @@ public class TopLevelScopesParsing {
     }
 
     private boolean isScope(Range range) {
-        return new Recognition(value, range).recognize() == Recognition.Element.SCOPE;
+        return new LazySignature(value.getSub(range)).recognize().isScope();
     }
 }

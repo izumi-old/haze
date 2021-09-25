@@ -1,67 +1,44 @@
 package org.izumi.haze.modules.impl.java.parsing;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.izumi.haze.HazeException;
 import org.izumi.haze.modules.impl.java.source.Keyword;
 import org.izumi.haze.modules.impl.java.source.Type;
-import org.izumi.haze.util.Range;
 import org.izumi.haze.string.HazeString;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class Recognition {
+    private final Collection<Keyword> keywords;
+    private final Collection<HazeString> unresolved;
 
-    @NonNull
-    private final HazeString value;
-
-    @NonNull
-    private final Range bracesRange;
-    private Collection<String> unresolvedLemmas;
-
-    public Element recognize() {
-        if (bracesRange.start == 0) {
-            return Element.SCOPE;
-        }
-
-        String value = this.value.substring(new Range(0, bracesRange.end));
-        String before = value.substring(0, bracesRange.start);
-
-        unresolvedLemmas = new LinkedList<>();
-        while (true) {
-            int lastSpaceIndex = before.lastIndexOf(" ");
-            if (lastSpaceIndex == -1) {
-                break; //TODO: ?
-            }
-
-            String lemma = before.substring(lastSpaceIndex + 1);
-            for (Type type : Type.values()) {
-                if (lemma.contains(type.toString())) {
-                    return Element.of(type);
-                }
-            }
-
-            if (lemma.contains(Keyword.VOID.toString())) {
-                return Element.METHOD;
-            }
-
-            unresolvedLemmas.add(lemma);
-            Optional<Element> resolved = resolveLemmas();
-            if (resolved.isPresent()) {
-                return resolved.get();
-            }
-
-            before = before.substring(0, lastSpaceIndex);
-        }
-
-        return Element.SCOPE;
+    /**
+     * @return true if given is a class or an annotation (@interface) or an interface or an enum
+     */
+    public boolean isAnyClassType() {
+        Element recognized = recognize();
+        return recognized == Element.CLASS || recognized == Element.ANNOTATION ||
+                recognized == Element.INTERFACE || recognized == Element.ENUM;
     }
 
-    private Optional<Element> resolveLemmas() {
-        return Optional.empty(); //TODO: try recognize signature
+    public boolean isScope() {
+        return recognize() == Element.SCOPE;
+    }
+
+    private Element recognize() {
+        if (keywords.contains(Keyword.VOID)) {
+            return Element.METHOD;
+        }
+
+        for (Type type : Type.values()) {
+            if (keywords.contains(type.getKeyword())) {
+                return Element.of(type);
+            }
+        }
+
+        throw new HazeException("Unable to recognize. Keywords: " + keywords +
+                ". Unresolved: " + unresolved.toString());
     }
 
     enum Element {

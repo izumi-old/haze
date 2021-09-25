@@ -11,14 +11,13 @@ import org.izumi.haze.modules.impl.java.util.Imports;
 import org.izumi.haze.modules.impl.java.util.impl.ClassesImpl;
 import org.izumi.haze.modules.impl.java.util.impl.CommentsImpl;
 import org.izumi.haze.modules.impl.java.util.impl.ElementsImpl;
+import org.izumi.haze.string.HazeRegexString;
 import org.izumi.haze.string.HazeStringBuilder;
 import org.izumi.haze.modules.impl.java.util.impl.ImportsImpl;
 import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.string.HazeString;
 import org.izumi.haze.util.Range;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.SortedMap;
@@ -49,8 +48,8 @@ public class File {
         this.parsed = file.parsed;
     }
 
-    public Collection<Class> getClasses() {
-        return new ArrayList<>(classes);
+    public Classes getClasses() {
+        return new ClassesImpl(classes);
     }
 
     public void renameClassAndUsages(String name, String replacement) {
@@ -65,7 +64,11 @@ public class File {
     }
 
     public void parse() {
-        HazeString contentAsString = new HazeString(content.content);
+        HazeRegexString contentAsString = new HazeRegexString(content.content)
+                .replaceAll("[ ]*\n[ ]*", " ")
+                .replaceAll("[ ]*\r[ ]*", " ")
+                .replaceAll("[ ]*\n\r[ ]*", " ")
+                .replaceAll("[ ][ ]*", " ");
         SortedMap<Range, Package> packagesMap = new PackageParsing(contentAsString).parse();
         SortedMap<Range, Import> importsMap = new ImportsParsing(contentAsString).parse();
         SortedMap<Range, Class> classesMap = new TopLevelClassesParsing(contentAsString).parse();
@@ -85,7 +88,6 @@ public class File {
         classes = new ClassesImpl();
         for (Map.Entry<Range, Class> entry : classesMap.entrySet()) {
             Class clazz = entry.getValue();
-            clazz.initFields();
             clazz.parse();
             classes.add(clazz);
         }
@@ -100,7 +102,7 @@ public class File {
         elementsMap.putAll(classesMap, commentsMap);
 
         for (Range unusedRange : elementsMap.getUnusedRanges(getBodyRange())) {
-            Comment comment = new Comment(contentAsString.sub(unusedRange));
+            Comment comment = new Comment(contentAsString.getSub(unusedRange));
             comments.add(comment);
             elementsMap.put(unusedRange, comment);
         }

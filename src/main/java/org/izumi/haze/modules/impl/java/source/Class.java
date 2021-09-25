@@ -12,7 +12,7 @@ import org.izumi.haze.modules.impl.java.util.impl.CommentsImpl;
 import org.izumi.haze.modules.impl.java.util.impl.ElementsImpl;
 import org.izumi.haze.string.HazeStringBuilder;
 import org.izumi.haze.string.Regex;
-import org.izumi.haze.string.RegexHazeString;
+import org.izumi.haze.string.HazeRegexString;
 import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.modules.impl.java.util.impl.ScopesImpl;
 import org.izumi.haze.util.Range;
@@ -31,12 +31,12 @@ public class Class implements Element {
 
     private long declarationOrder;
 
-    private Classes classes; //can have annotations on it //TODO: need change top-level parsing to keep this information
-    private Scopes scopes;
-    private Comments comments;
-    private Collection<Method> methods; //can have annotations on it
-    private Collection<Annotation> annotations;
-    private Collection<Variable> variables;
+    private final Classes classes = new ClassesImpl();
+    private final Scopes scopes = new ScopesImpl();
+    private final Comments comments = new CommentsImpl();
+    private final Collection<Method> methods = new LinkedList<>();
+    private final Collection<Annotation> annotations = new LinkedList<>();
+    private final Collection<Variable> variables = new LinkedList<>();
 
     private final Collection<Keyword> keywords = new LinkedList<>();
     private String name;
@@ -48,6 +48,8 @@ public class Class implements Element {
 
     @Override
     public void renameClassAndUsages(String name, String replacement) {
+        otherSignature = otherSignature.replace(name, replacement);
+
         classes.renameClassAndUsages(name, replacement);
         scopes.renameClassAndUsages(name, replacement);
         comments.renameClassAndUsages(name, replacement);
@@ -75,19 +77,14 @@ public class Class implements Element {
         return keywords.contains(AccessModifier.PUBLIC.getKeyword());
     }
 
-    public void initFields() {
-        classes = new ClassesImpl();
-        scopes = new ScopesImpl();
-        comments = new CommentsImpl();
-        methods = new LinkedList<>();
-        annotations = new LinkedList<>();
-        variables = new LinkedList<>();
-
+    public void parse() {
+        //@RequiredArgsConstructor\npublic class Regex
         String signature = getSignature();
         parseOtherSignature(signature);
-       /* .replaceAll(" implements.*", "") //remove implements information
-                .replaceAll(" extends.*", "") //remove extends information
-                .replaceAll("<.+>", ""); //remove generics information*/
+        if (!otherSignature.isEmpty()) {
+            signature = signature.replace(otherSignature, "");
+        }
+
         for (Keyword keyword : List.of(Keyword.ABSTRACT, Keyword.FINAL, Keyword.STATIC)) {
             if (signature.contains(keyword.toString())) {
                 keywords.add(keyword);
@@ -100,28 +97,19 @@ public class Class implements Element {
         String typeAsString = type.toString();
         int nameIndex = signature.indexOf(typeAsString) + typeAsString.length() + 1;
         name = signature.substring(nameIndex);
-    }
 
-    public void parse() {
         Range searchIn = getBodyRange();
 
-        SortedMap<Range, Class> classesMap = new TopLevelClassesParsing(value, searchIn).parse();
-        for (Map.Entry<Range, Class> entry : classesMap.entrySet()) {
-            Class clazz = entry.getValue();
-            clazz.initFields();
-            clazz.parse();
-            classes.add(clazz);
-        }
+        SortedMap<Range, Class> classesMap = new TopLevelClassesParsing(value.getSub(searchIn)).parse();
+        classes.addAll(classesMap.values());
         SortedMap<Range, Scope> scopesMap = new TopLevelScopesParsing(value, searchIn).parse();
-        for (Map.Entry<Range, Scope> entry : scopesMap.entrySet()) {
-            scopes.add(entry.getValue());
-        }
+        scopes.addAll(scopesMap.values());
 
         RangeMap<Element> elementsMap = new RangeMap<>();
         elementsMap.putAll(classesMap, scopesMap);
 
         for (Range unusedRange : elementsMap.getUnusedRanges(searchIn)) {
-            Comment comment = new Comment(value.sub(unusedRange));
+            Comment comment = new Comment(value.getSub(unusedRange));
             comments.add(comment);
             elementsMap.put(unusedRange, comment);
         }
@@ -157,7 +145,8 @@ public class Class implements Element {
     }
 
     private String getSignature() {
-        return value.substring(new Range(0, value.indexOf("{")))
+        return value.getSub(new Range(0, value.firstIndexOf("{")))
+                .toString()
                 .trim();
     }
 
@@ -182,13 +171,8 @@ public class Class implements Element {
     }
 
     private void parseRecursive() {
-        for (Class clazz : classes) {
-            clazz.initFields();
-            clazz.parse();
-        }
-        for (Scope scope : scopes) {
-            scope.parse();
-        }
+        classes.forEach(Class::parse);
+        scopes.forEach(Scope::parse);
     }
 
     private String formSignature() {
@@ -225,7 +209,7 @@ public class Class implements Element {
     }
 
     private void parseOtherSignature(String signature) {
-        RegexHazeString regexString = new RegexHazeString(signature);
+        HazeRegexString regexString = new HazeRegexString(signature);
         Optional<Range> additionalInfo = regexString.firstRangeOfRegex(new Regex("<.+> implements.*"));
         if (additionalInfo.isEmpty()) {
             additionalInfo = regexString.firstRangeOfRegex(new Regex("<.+> extends.*"));
@@ -241,7 +225,7 @@ public class Class implements Element {
         }
 
         if (additionalInfo.isPresent()) {
-            otherSignature = regexString.substring(additionalInfo.get());
+            otherSignature = regexString.getSub(additionalInfo.get()).toString();
         } else {
             otherSignature = "";
         }
