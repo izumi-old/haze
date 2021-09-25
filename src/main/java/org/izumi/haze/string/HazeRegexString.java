@@ -18,11 +18,11 @@ public class HazeRegexString extends HazeString {
         return firstRangeOfRegex(new Range(this), regex);
     }
 
-    public Optional<Range> firstRangeOfRegex(Range inRange, Regex regex) throws IndexOutOfBoundsException {
-        validateRangeToOperateIn(inRange);
+    public Optional<Range> firstRangeOfRegex(Range range, Regex regex) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
 
         Pattern pattern = Pattern.compile(regex.toString());
-        Matcher matcher = pattern.matcher(string).region(inRange.start, inRange.end + 1);
+        Matcher matcher = pattern.matcher(string).region(range.start, range.end + 1);
         if (matcher.find()) {
             return Optional.of(new Range(matcher.start(), matcher.end() - 1));
         }
@@ -30,15 +30,32 @@ public class HazeRegexString extends HazeString {
         return Optional.empty();
     }
 
+    public Optional<Range> lastRangeOfRegex(Regex regex) {
+        return lastRangeOfRegex(range, regex);
+    }
+
+    public Optional<Range> lastRangeOfRegex(Range range, Regex regex) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
+
+        Pattern pattern = Pattern.compile(regex.toString());
+        Matcher matcher = pattern.matcher(string).region(range.start, range.end + 1);
+        CompareList<Range> ranges = new CompareList<>();
+        while (matcher.find()) {
+            ranges.add(new Range(matcher.start(), matcher.end() - 1));
+        }
+
+        return ranges.getMax();
+    }
+
     public CompareList<Range> rangesOfRegex(Regex regex) {
         return rangesOfRegex(range, regex);
     }
 
-    public CompareList<Range> rangesOfRegex(Range inRange, Regex regex) throws IndexOutOfBoundsException {
-        validateRangeToOperateIn(inRange);
+    public CompareList<Range> rangesOfRegex(Range range, Regex regex) throws IndexOutOfBoundsException {
+        validateRangeToOperateIn(range);
 
         Pattern pattern = Pattern.compile(regex.toString());
-        Matcher matcher = pattern.matcher(string).region(inRange.start, inRange.end + 1);
+        Matcher matcher = pattern.matcher(string).region(range.start, range.end + 1);
         CompareList<Range> ranges = new CompareList<>();
         while (matcher.find()) {
             ranges.add(new Range(matcher.start(), matcher.end() - 1));

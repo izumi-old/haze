@@ -35,6 +35,22 @@ public class HazeRegexStringTest {
         assert string.firstRangeOfRegex(string.getRange().get(), new Regex("123")).isEmpty();
         assert string.firstRangeOfRegex(string.getRange().get(), new Regex("that.?")).get()
                 .equals(new Range(7, 11));
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> string.firstRangeOfRegex(new Range(1, 999), new Regex("t")));
+    }
+
+    @Test
+    public void lastRangeOfRegexTest() {
+        HazeRegexString string = new HazeRegexString("I know thatt I know nothing?");
+        assert string.lastRangeOfRegex(string.getRange().get(), new Regex("now")).get()
+                .equals(new Range(16, 18));
+        assert string.lastRangeOfRegex(string.getRange().get(), new Regex("123")).isEmpty();
+        assert string.lastRangeOfRegex(string.getRange().get(), new Regex("that.?")).get()
+                .equals(new Range(7, 11));
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> string.lastRangeOfRegex(new Range(1, 999), new Regex("t")));
     }
 
     @Test
