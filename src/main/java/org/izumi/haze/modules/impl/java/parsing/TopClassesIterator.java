@@ -2,22 +2,21 @@ package org.izumi.haze.modules.impl.java.parsing;
 
 import org.izumi.haze.HazeException;
 import org.izumi.haze.modules.impl.java.source.Class;
-import org.izumi.haze.string.HazeString;
 import org.izumi.haze.string.Regex;
 import org.izumi.haze.string.HazeRegexString;
+import org.izumi.haze.util.CompareList;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.Ranges;
 
 import java.util.Iterator;
 import java.util.Optional;
 
 public class TopClassesIterator implements Iterator<RangeClass> {
-    private final HazeString value;
+    private final HazeRegexString value;
     private final Range range;
     private Range currentRange;
     private Iterator<Range> topLevelBracesIterator;
 
-    public TopClassesIterator(HazeString value) {
+    public TopClassesIterator(HazeRegexString value) {
         this.value = value;
         this.range = new Range(value);
         this.currentRange = new Range(value);
@@ -31,7 +30,7 @@ public class TopClassesIterator implements Iterator<RangeClass> {
 
     @Override
     public RangeClass next() {
-        int start = value.firstIndexOf("{", currentRange);
+        int start = value.firstRangeOf("{", currentRange).get().start;
         int openBraces = 1;
         for (int end = start+1; end <= range.end; end++) {
             char c = value.charAt(end);
@@ -61,7 +60,7 @@ public class TopClassesIterator implements Iterator<RangeClass> {
     private Range withAnnotations(Range range) {
         Range annotationsZone = new Range(0, range.start > 0 ? range.start - 1 : 0);
         HazeRegexString regexString = new HazeRegexString(value.getSub(annotationsZone));
-        Ranges ranges = regexString.rangesOfRegex(new Regex("@.*@"));
+        CompareList<Range> ranges = regexString.rangesOfRegex(new Regex("@.*@"));
 
         Optional<Range> min = ranges.getMin();
         if (min.isEmpty()) {

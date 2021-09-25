@@ -1,13 +1,14 @@
 package org.izumi.haze.modules.impl.java.source;
 
-import org.izumi.haze.string.HazeString;
+import org.izumi.haze.string.HazeRegexString;
+import org.izumi.haze.string.Regex;
 import org.izumi.haze.string.SeparatedStringPredicate;
 
 public class Comment implements Element {
-    private HazeString value;
+    private HazeRegexString value;
     private long declarationOrder;
 
-    public Comment(HazeString value) {
+    public Comment(HazeRegexString value) {
         this.value = value;
     }
 
@@ -23,7 +24,7 @@ public class Comment implements Element {
 
     @Override
     public void renameClassAndUsages(String name, String replacement) {
-        value = value.replaceAllIf(name, replacement, new SeparatedStringPredicate());
+        value = value.replaceAllIf(new Regex(name), replacement, new SeparatedStringPredicate());
     }
 
     @Override

@@ -4,5 +4,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class Regex {
-    public final String regex;
+    private final String string;
+
+    @Override
+    public String toString() {
+        return string;
+    }
 }

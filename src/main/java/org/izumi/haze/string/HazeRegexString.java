@@ -1,9 +1,11 @@
 package org.izumi.haze.string;
 
+import org.izumi.haze.util.CompareList;
+import org.izumi.haze.util.ExtendedList;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.util.Ranges;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,32 +19,32 @@ public class HazeRegexString extends HazeString {
     }
 
     public Optional<Range> firstRangeOfRegex(Range inRange, Regex regex) {
-        Pattern pattern = Pattern.compile(regex.regex);
-        Matcher matcher = pattern.matcher(string).region(inRange.start, inRange.end);
+        Pattern pattern = Pattern.compile(regex.toString());
+        Matcher matcher = pattern.matcher(string).region(inRange.start, inRange.end + 1);
         if (matcher.find()) {
-            return Optional.of(new Range(matcher.start(), matcher.end() + 1));
+            return Optional.of(new Range(matcher.start(), matcher.end() - 1));
         }
 
         return Optional.empty();
     }
 
-    public Ranges rangesOfRegex(Regex regex) {
-        return rangesOfRegex(new Range(this), regex);
+    public CompareList<Range> rangesOfRegex(Regex regex) {
+        return rangesOfRegex(range, regex);
     }
 
-    public Ranges rangesOfRegex(Range inRange, Regex regex) {
-        Pattern pattern = Pattern.compile(regex.regex);
-        Matcher matcher = pattern.matcher(string).region(inRange.start, inRange.end);
-        Ranges ranges = new Ranges();
-        if (matcher.find()) {
-            ranges.add(new Range(matcher.start(), matcher.end()));
+    public CompareList<Range> rangesOfRegex(Range inRange, Regex regex) {
+        Pattern pattern = Pattern.compile(regex.toString());
+        Matcher matcher = pattern.matcher(string).region(inRange.start, inRange.end + 1);
+        CompareList<Range> ranges = new CompareList<>();
+        while (matcher.find()) {
+            ranges.add(new Range(matcher.start(), matcher.end() - 1));
         }
 
         return ranges;
     }
 
-    public HazeRegexString replaceAll(String regex, String replacement) {
-        return new HazeRegexString(string.replaceAll(regex, replacement));
+    public HazeRegexString replaceAll(Regex regex, String replacement) {
+        return new HazeRegexString(string.replaceAll(regex.toString(), replacement));
     }
 
     @Override
@@ -50,7 +52,44 @@ public class HazeRegexString extends HazeString {
         return new HazeRegexString(string.substring(range.start, range.end + 1));
     }
 
-    public HazeRegexString deleteAll(String regex) {
-        return new HazeRegexString(string.replaceAll(regex, ""));
+    public HazeRegexString deleteAll(Regex regex) {
+        return new HazeRegexString(string.replaceAll(regex.toString(), ""));
+    }
+
+    public HazeRegexString replaceAllIf(Regex regex, String replacement, Predicate<SeparatedString> predicate) {
+        return replaceAllIf(range, regex, replacement, predicate);
+    }
+
+    public HazeRegexString replaceAllIf(Range range,
+                                        Regex regex,
+                                        String replacement,
+                                        Predicate<SeparatedString> predicate) {
+        Pattern pattern = Pattern.compile(regex.toString());
+        Matcher matcher = pattern.matcher(string);
+        ExtendedList<Range> replaceRanges = new ExtendedList<>();
+        while (matcher.find() && matcher.end() <= range.end) {
+            if (isPredicateTest(matcher.start(), regex.toString(), predicate)) {
+                replaceRanges.add(new Range(matcher.start(), matcher.end()));
+            }
+        }
+
+        StringBuilder result = new StringBuilder(string);
+        for (int i = 0; i < replaceRanges.size(); i++) {
+            Range replaceRange = replaceRanges.get(i);
+            result.replace(replaceRange.start, replaceRange.end, replacement);
+            for (int j = i; j < replaceRanges.size(); j++) {
+                replaceRanges.update(j, range1 -> range1.shift((int) replaceRange.getLength()));
+            }
+        }
+
+        return new HazeRegexString(result);
+    }
+
+    private boolean isPredicateTest(int index, String toReplace, Predicate<SeparatedString> predicate) {
+        int beforeIndex = index > 0 ? index - 1 : 0;
+        int afterIndex = index + toReplace.length();
+        char before = charAt(beforeIndex);
+        char after = charAt(afterIndex);
+        return predicate.test(new SeparatedString(before, after, toReplace));
     }
 }

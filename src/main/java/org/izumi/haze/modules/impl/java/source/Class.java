@@ -16,7 +16,6 @@ import org.izumi.haze.string.HazeRegexString;
 import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.modules.impl.java.util.impl.ScopesImpl;
 import org.izumi.haze.util.Range;
-import org.izumi.haze.string.HazeString;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -27,7 +26,7 @@ import java.util.SortedMap;
 import java.util.function.BiPredicate;
 
 public class Class implements Element {
-    private final HazeString value;
+    private final HazeRegexString value;
 
     private long declarationOrder;
 
@@ -42,7 +41,7 @@ public class Class implements Element {
     private String name;
     private String otherSignature;
 
-    public Class(HazeString value) {
+    public Class(HazeRegexString value) {
         this.value = value;
     }
 
@@ -145,7 +144,7 @@ public class Class implements Element {
     }
 
     private String getSignature() {
-        return value.getSub(new Range(0, value.firstIndexOf("{")))
+        return value.getSub(new Range(0, value.firstRangeOf("{").get().start))
                 .toString()
                 .trim();
     }
@@ -204,8 +203,8 @@ public class Class implements Element {
 
     private Range getBodyRange() {
         return new Range(
-                value.firstIndexOf("{") + 1,
-                value.lastIndexOf("}") - 1);
+                value.firstRangeOf("{").get().start + 1,
+                value.lastRangeOf("}").get().start - 1);
     }
 
     private void parseOtherSignature(String signature) {

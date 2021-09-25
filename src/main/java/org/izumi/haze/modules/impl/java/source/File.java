@@ -14,6 +14,7 @@ import org.izumi.haze.modules.impl.java.util.impl.ElementsImpl;
 import org.izumi.haze.string.HazeRegexString;
 import org.izumi.haze.string.HazeStringBuilder;
 import org.izumi.haze.modules.impl.java.util.impl.ImportsImpl;
+import org.izumi.haze.string.Regex;
 import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.string.HazeString;
 import org.izumi.haze.util.Range;
@@ -65,10 +66,10 @@ public class File {
 
     public void parse() {
         HazeRegexString contentAsString = new HazeRegexString(content.content)
-                .replaceAll("[ ]*\n[ ]*", " ")
-                .replaceAll("[ ]*\r[ ]*", " ")
-                .replaceAll("[ ]*\n\r[ ]*", " ")
-                .replaceAll("[ ][ ]*", " ");
+                .replaceAll(new Regex("[ ]*\n[ ]*"), " ")
+                .replaceAll(new Regex("[ ]*\r[ ]*"), " ")
+                .replaceAll(new Regex("[ ]*\n\r[ ]*"), " ")
+                .replaceAll(new Regex("[ ][ ]*"), " ");
         SortedMap<Range, Package> packagesMap = new PackageParsing(contentAsString).parse();
         SortedMap<Range, Import> importsMap = new ImportsParsing(contentAsString).parse();
         SortedMap<Range, Class> classesMap = new TopLevelClassesParsing(contentAsString).parse();
@@ -114,8 +115,9 @@ public class File {
 
     private Range getBodyRange() {
         HazeString string = new HazeString(this.content.content);
-        return new Range(string.firstIndexOf("{") + 1,
-                string.lastIndexOf("}") - 1);
+        return new Range(
+                string.firstRangeOf("{").get().start + 1,
+                string.lastRangeOf("}").get().start - 1);
     }
 
     public Content toContent() {

@@ -1,6 +1,7 @@
 package org.izumi.haze.modules.impl.java.parsing;
 
 import org.izumi.haze.string.HazeRegexString;
+import org.izumi.haze.string.Regex;
 import org.izumi.haze.util.Range;
 
 import java.util.Iterator;
@@ -9,8 +10,8 @@ public class LemmasIterator implements Iterator<Lemma> {
     private HazeRegexString value;
 
     public LemmasIterator(HazeRegexString value) {
-        this.value = value.replaceAll("[ ]*\n[ ]*", " ")
-                .replaceAll("[ ]*\r[ ]*", " ");
+        this.value = value.replaceAll(new Regex("[ ]*\n[ ]*"), " ")
+                .replaceAll(new Regex("[ ]*\r[ ]*"), " ");
     }
 
     @Override
@@ -20,7 +21,7 @@ public class LemmasIterator implements Iterator<Lemma> {
 
     @Override
     public Lemma next() {
-        int beforeSpace = value.lastIndexOf(" ");
+        int beforeSpace = value.lastRangeOf(" ").get().start;
         Lemma lemma;
         if (beforeSpace == -1) {
             Range range = new Range(value);

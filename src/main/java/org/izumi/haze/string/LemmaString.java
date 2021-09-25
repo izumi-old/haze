@@ -20,18 +20,18 @@ public class LemmaString extends HazeString {
         if (spaces == 0) {
             return Optional.empty();
         } else if (spaces == 1) {
-            int spaceIndex = firstIndexOf(" ", borders);
+            int spaceIndex = firstRangeOf(" ", borders).get().start;
             if (spaceIndex == 0) {
                 return Optional.empty();
             }
 
             return Optional.of(getSub(new Range(borders.start, spaceIndex - 1)));
         } else {
-            int end = lastIndexOf(" ", borders) - 1;
+            int end = lastRangeOf(" ", borders).get().start - 1;
             if (end < borders.start) {
                 return Optional.empty();
             }
-            int start = lastIndexOf(" ", new Range(borders.start, end));
+            int start = lastRangeOf(" ", new Range(borders.start, end)).get().start;
 
             return Optional.of(getSub(new Range(start, end)));
         }

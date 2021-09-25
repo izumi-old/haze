@@ -6,9 +6,9 @@ import org.izumi.haze.modules.impl.java.source.Type;
 import org.izumi.haze.modules.impl.java.source.Class;
 import org.izumi.haze.string.Regex;
 import org.izumi.haze.string.HazeRegexString;
+import org.izumi.haze.util.CompareList;
 import org.izumi.haze.util.Range;
 import org.izumi.haze.string.HazeString;
-import org.izumi.haze.util.Ranges;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -96,7 +96,7 @@ public class TopLevelClassesParsing {
         int start;
         int end = range.start > 0 ? range.start - 1 : 0;
         while (true) {
-            start = value.lastIndexOf(" ", new Range(0, end)) + 1;
+            start = value.lastRangeOf(" ", new Range(0, end)).get().start + 1;
             if (start == -1 || end == -1) {
                 return Optional.empty();
             }
@@ -122,7 +122,7 @@ public class TopLevelClassesParsing {
     private Range withAnnotations(Range range) {
         Range annotationsZone = new Range(0, range.start > 0 ? range.start - 1 : 0);
         HazeRegexString regexString = new HazeRegexString(value.getSub(annotationsZone));
-        Ranges ranges = regexString.rangesOfRegex(new Regex("@.*@"));
+        CompareList<Range> ranges = regexString.rangesOfRegex(new Regex("@.*@"));
 
         Optional<Range> min = ranges.getMin();
         if (min.isEmpty()) {

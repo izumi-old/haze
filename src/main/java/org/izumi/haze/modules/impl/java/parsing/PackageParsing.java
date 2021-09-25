@@ -5,6 +5,7 @@ import org.izumi.haze.modules.impl.java.source.Keyword;
 import org.izumi.haze.modules.impl.java.source.Package;
 import org.izumi.haze.string.HazeRegexString;
 import org.izumi.haze.string.HazeString;
+import org.izumi.haze.string.Regex;
 import org.izumi.haze.util.Range;
 
 import java.util.Map;
@@ -25,7 +26,7 @@ public class PackageParsing {
         Package aPackage;
         if (matcher.find()) {
             range = new Range(matcher.start(), matcher.end());
-            HazeString string = this.string.getSub(range).deleteAll("\n");
+            HazeString string = this.string.getSub(range).deleteAll(new Regex("\n"));
             aPackage = new Package(string);
         } else {
             range = Range.EMPTY_RANGE;

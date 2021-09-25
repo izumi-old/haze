@@ -1,5 +1,6 @@
 package org.izumi.haze.util;
 
+import java.util.Collection;
 import java.util.Objects;
 
 public class Range implements Comparable<Range> {
@@ -17,6 +18,10 @@ public class Range implements Comparable<Range> {
         }
         this.start = start;
         this.end = end;
+    }
+
+    public Range(int start) {
+        this(start, start);
     }
 
     public Range(CharSequence sequence) {
@@ -61,6 +66,10 @@ public class Range implements Comparable<Range> {
         return !contains(i);
     }
 
+    public boolean doesNotContain(Range range) {
+        return !contains(range);
+    }
+
     public boolean doesNotContainAny(int... is) {
         for (int i : is) {
             if (contains(i)) {
@@ -71,8 +80,18 @@ public class Range implements Comparable<Range> {
         return true;
     }
 
+    public boolean doesNotContainAny(Collection<Range> ranges) {
+        for (Range range : ranges) {
+            if (contains(range)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public Range shift(int changed) {
-        if (changed > end) {
+        if (changed > getLength()) {
             throw new IllegalArgumentException("Cannot shift because length of range is too small");
         }
 

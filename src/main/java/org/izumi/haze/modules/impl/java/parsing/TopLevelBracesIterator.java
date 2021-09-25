@@ -2,6 +2,7 @@ package org.izumi.haze.modules.impl.java.parsing;
 
 import org.izumi.haze.HazeException;
 import org.izumi.haze.string.HazeString;
+import org.izumi.haze.util.OptionalList;
 import org.izumi.haze.util.Range;
 
 import java.util.Iterator;
@@ -29,7 +30,7 @@ public class TopLevelBracesIterator implements Iterator<Range> {
             throw new NoSuchElementException("Iterator doesn't have elements");
         }
 
-        int start = string.firstIndexOf("{", currentRange);
+        int start = string.firstRangeOf("{", currentRange).get().start;
         int end = findClosingBrace(start).orElseThrow(() -> new HazeException("Here is not enough of closing braces"));
 
         Range bracesRange = new Range(start, end);
@@ -67,24 +68,28 @@ public class TopLevelBracesIterator implements Iterator<Range> {
         }
 
         Range range = new Range(0, index);
-        int textBlockStartIndex = string.lastIndexOf("\"\"\"", range);
-        int textBlockEndIndex = string.firstIndexOf("\"\"\"", index) + 2;
-        if (textBlockStartIndex != -1 && textBlockEndIndex > 1) {
-            Range textBlockRange = new Range(textBlockStartIndex, textBlockEndIndex);
+        Optional<Range> optionalTextBlockStartRange = string.lastRangeOf("\"\"\"", range);
+        Optional<Range> optionalTextBlockEndRange = string.firstRangeOf("\"\"\"", index);
+        if (new OptionalList<>(optionalTextBlockStartRange, optionalTextBlockEndRange).allPresent()) {
+            Range textBlockRange = new Range(
+                    optionalTextBlockStartRange.get().start,
+                    optionalTextBlockEndRange.get().start);
             if (textBlockRange.contains(index)) {
                 return true;
             }
         }
 
-        int lineBreakingIndexBefore = string.lastIndexOf("\n", range);
-        int lineBreakingIndexAfter = string.firstIndexOf("\n", index);
-        int openingIndex = string.lastIndexOf(List.of("\"", "'"), range);
-        int closingIndex = string.firstIndexOf(List.of("\"", "'"), index);
-        if (openingIndex == -1 || closingIndex == -1) {
+        Optional<Range> optionalLineBreakingBeforeRange = string.lastRangeOf("\n", range);
+        Optional<Range> optionalLineBreakingAfterRange = string.firstRangeOf("\n", index);
+        Optional<Range> optionalOpeningRange = string.lastRangeOf(List.of("\"", "'"), range);
+        Optional<Range> optionalClosingRange = string.firstRangeOf(List.of("\"", "'"), index);
+        if (new OptionalList<>(optionalOpeningRange, optionalClosingRange).anyEmpty()) {
             return false;
         }
 
-        return new Range(openingIndex, closingIndex).doesNotContainAny(lineBreakingIndexBefore, lineBreakingIndexAfter);
+        Range literalRange = new Range(optionalOpeningRange.get().start, optionalClosingRange.get().start);
+        return literalRange.doesNotContainAny(
+                new OptionalList<>(optionalLineBreakingBeforeRange, optionalLineBreakingAfterRange).getAllPresent());
     }
 
     private boolean isNotInLiteral(int index) {
