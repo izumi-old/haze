@@ -1,6 +1,7 @@
 package org.izumi.haze.modules.impl.java.source;
 
 import org.izumi.haze.HazeException;
+import org.izumi.haze.modules.impl.java.parsing.AnnotationsParsing;
 import org.izumi.haze.modules.impl.java.parsing.ClassesParsing;
 import org.izumi.haze.modules.impl.java.parsing.ScopesParsing;
 import org.izumi.haze.modules.impl.java.util.Classes;
@@ -10,9 +11,12 @@ import org.izumi.haze.modules.impl.java.util.Scopes;
 import org.izumi.haze.modules.impl.java.util.impl.ClassesImpl;
 import org.izumi.haze.modules.impl.java.util.impl.CommentsImpl;
 import org.izumi.haze.modules.impl.java.util.impl.ElementsImpl;
+import org.izumi.haze.string.HazeString;
 import org.izumi.haze.string.HazeStringBuilder;
+import org.izumi.haze.string.LemmaString;
 import org.izumi.haze.string.Regex;
 import org.izumi.haze.string.HazeRegexString;
+import org.izumi.haze.util.ExtendedList;
 import org.izumi.haze.util.RangeMap;
 import org.izumi.haze.modules.impl.java.util.impl.ScopesImpl;
 import org.izumi.haze.util.Range;
@@ -36,6 +40,7 @@ public class Class implements Element {
     private final Collection<Method> methods = new LinkedList<>();
     private final Collection<Annotation> annotations = new LinkedList<>();
     private final Collection<Variable> variables = new LinkedList<>();
+    private final Comments unresolved = new CommentsImpl();
 
     private final Collection<Keyword> keywords = new LinkedList<>();
     private String name;
@@ -52,6 +57,7 @@ public class Class implements Element {
         classes.renameClassAndUsages(name, replacement);
         scopes.renameClassAndUsages(name, replacement);
         comments.renameClassAndUsages(name, replacement);
+        unresolved.renameClassAndUsages(name, replacement);
 
         if (this.name.equals(name)) {
             this.name = replacement;
@@ -77,8 +83,8 @@ public class Class implements Element {
     }
 
     public void parse() {
-        //@RequiredArgsConstructor\npublic class Regex
-        String signature = getSignature();
+        annotations.addAll(parseAnnotations());
+        String signature = getSignature().toString();
         parseOtherSignature(signature);
         if (!otherSignature.isEmpty()) {
             signature = signature.replace(otherSignature, "");
@@ -107,11 +113,7 @@ public class Class implements Element {
         RangeMap<Element> elementsMap = new RangeMap<>();
         elementsMap.putAll(classesMap, scopesMap);
 
-        for (Range unusedRange : elementsMap.getUnusedRanges(searchIn)) {
-            Comment comment = new Comment(value.getSub(unusedRange));
-            comments.add(comment);
-            elementsMap.put(unusedRange, comment);
-        }
+        markUnresolved(searchIn, elementsMap);
 
         setUpOrderNumbers(elementsMap);
         parseRecursive();
@@ -120,16 +122,29 @@ public class Class implements Element {
     @Override
     public String toString() {
         Elements<?> ordered = new ElementsImpl(classes, scopes, comments,
-                methods, annotations, variables).getOrderedCopy();
+                unresolved, methods, variables).getOrderedCopy();
         return new HazeStringBuilder()
+                .appendEachSeparateSpace(annotations)
                 .append(formSignature())
                 .appendSpace()
                 .append("{")
-                .appendEachSeparateLine(ordered)
-                .appendNewLine()
+                .appendEachSeparateSpace(ordered)
+                .appendSpace()
                 .append("}")
-                .appendNewLine()
                 .build();
+    }
+
+    private void markUnresolved(Range searchIn, RangeMap<Element> elementsMap) {
+        for (Range unusedRange : elementsMap.getUnusedRanges(searchIn)) {
+            HazeString string = value.getSub(unusedRange).trim();
+            if (string.equalsAny(new ExtendedList<>("", "\n", "\r"))) {
+                continue;
+            }
+
+            Comment comment = new Comment(string);
+            unresolved.add(comment);
+            elementsMap.put(unusedRange, comment);
+        }
     }
 
     @SafeVarargs
@@ -143,10 +158,58 @@ public class Class implements Element {
         return Optional.empty();
     }
 
-    private String getSignature() {
-        return value.getSub(new Range(0, value.firstRangeOf("{").get().start))
-                .toString()
+    private HazeString getSignature() {
+        LemmaString withAnnotations = new LemmaString(
+                value.getSub(new Range(0, value.firstRangeOf("{").get().start - 1)));
+        if (withAnnotations.doesNotContain("@")) {
+            return withAnnotations.trim();
+        }
+
+        return excludeAnnotations(withAnnotations);
+    }
+
+    private HazeString excludeAnnotations(LemmaString withAnnotations) {
+        Range annotationsRange = getAnnotationsRange(withAnnotations);
+        Range range = withAnnotations.getRange().get();
+        if (annotationsRange.end == range.end) {
+            return new HazeString("");
+        }
+
+        return withAnnotations
+                .getSub(new Range(annotationsRange.end + 1, range.end))
                 .trim();
+    }
+
+    private Collection<Annotation> parseAnnotations() {
+        LemmaString withAnnotations = new LemmaString(
+                value.getSub(new Range(0, value.firstRangeOf("{").get().start - 1)));
+        if (withAnnotations.doesNotContain("@")) {
+            return new ExtendedList<>();
+        }
+
+        Range annotationsRange = getAnnotationsRange(withAnnotations);
+        LemmaString annotations = withAnnotations.getSub(annotationsRange);
+
+        return new AnnotationsParsing(annotations).parse();
+    }
+
+    //@SuppressWarnings(value = \"\") @NoArgsConstructor @AllArgsConstructor @RequiredArgsConstructor public
+    //@RequiredArgsConstructor(value = "1")\npublic class Regex //TODO: in given case it will be broken
+    private Range getAnnotationsRange(LemmaString withAnnotations) {
+        Optional<Range> optionalLemmaRange = withAnnotations.getFirstLemmaRange();
+        Range annotationsRange = new Range(0, optionalLemmaRange.get().end);
+        while (optionalLemmaRange.isPresent()) {
+            Range range = optionalLemmaRange.get();
+            LemmaString lemma = withAnnotations.getSub(range);
+            if (lemma.doesNotContain("@")) {
+                break;
+            }
+
+            annotationsRange = new Range(annotationsRange.start, range.end);
+            optionalLemmaRange = withAnnotations.getLemmaRangeAfter(annotationsRange);
+        }
+
+        return annotationsRange;
     }
 
     private Type parseAndGetType(String signature) {
@@ -170,7 +233,6 @@ public class Class implements Element {
     }
 
     private void parseRecursive() {
-        classes.forEach(Class::parse);
         scopes.forEach(Scope::parse);
     }
 

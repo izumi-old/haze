@@ -4,6 +4,7 @@ import org.izumi.haze.util.CompareList;
 import org.izumi.haze.util.ExtendedList;
 import org.izumi.haze.util.Range;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -12,6 +13,16 @@ import java.util.regex.Pattern;
 public class HazeRegexString extends HazeString {
     public HazeRegexString(CharSequence sequence) {
         super(sequence);
+    }
+
+    @Override
+    public HazeRegexString getSub(Range range) throws IndexOutOfBoundsException {
+        return new HazeRegexString(super.getSub(range));
+    }
+
+    @Override
+    public HazeRegexString trim() {
+        return new HazeRegexString(super.trim());
     }
 
     public Optional<Range> firstRangeOfRegex(Regex regex) {
@@ -68,13 +79,6 @@ public class HazeRegexString extends HazeString {
         return new HazeRegexString(string.replaceAll(regex.toString(), replacement));
     }
 
-    @Override
-    public HazeRegexString getSub(Range range) throws IndexOutOfBoundsException {
-        validateRangeToOperateIn(range);
-
-        return new HazeRegexString(string.substring(range.start, range.end + 1));
-    }
-
     public HazeRegexString deleteAll(Regex regex) {
         return new HazeRegexString(string.replaceAll(regex.toString(), ""));
     }
@@ -108,6 +112,16 @@ public class HazeRegexString extends HazeString {
         }
 
         return new HazeRegexString(result);
+    }
+
+    public Collection<HazeRegexString> split(Regex regex) { //TODO: cover by tests
+        String[] strings = string.split(regex.toString());
+        Collection<HazeRegexString> result = new ExtendedList<>();
+        for (String string : strings) {
+            result.add(new HazeRegexString(string));
+        }
+
+        return result;
     }
 
     private boolean isPredicateTest(int index, String toReplace, Predicate<SeparatedString> predicate) {

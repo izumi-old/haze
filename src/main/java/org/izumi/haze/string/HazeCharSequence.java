@@ -2,6 +2,7 @@ package org.izumi.haze.string;
 
 import org.izumi.haze.util.Range;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -65,6 +66,16 @@ public abstract class HazeCharSequence implements CharSequence {
         }
 
         return sequence.toString().equals(string);
+    }
+
+    public boolean equalsAny(Collection<CharSequence> sequences) { //TODO: cover with tests
+        for (CharSequence sequence : sequences) {
+            if (equals(sequence)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

@@ -106,6 +106,16 @@ public class HazeString extends HazeCharSequence {
         return false;
     }
 
+    public boolean doesNotContainAny(Collection<CharSequence> sequences) { //TODO: cover with tests
+        for (CharSequence sequence : sequences) {
+            if (contains(sequence)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public int countOccurrences(CharSequence sequence) {
         return countOccurrences(sequence, range);
     }
@@ -130,6 +140,10 @@ public class HazeString extends HazeCharSequence {
         }
 
         return result;
+    }
+
+    public HazeString trim() {
+        return new HazeString(string.trim());
     }
 
     protected void validateFromIndexToOperateIn(int fromIndex) throws IndexOutOfBoundsException {

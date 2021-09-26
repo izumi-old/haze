@@ -89,7 +89,6 @@ public class File {
         classes = new ClassesImpl();
         for (Map.Entry<Range, Class> entry : classesMap.entrySet()) {
             Class clazz = entry.getValue();
-            clazz.parse();
             classes.add(clazz);
         }
 

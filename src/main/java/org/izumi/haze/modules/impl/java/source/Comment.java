@@ -8,8 +8,8 @@ public class Comment implements Element {
     private HazeRegexString value;
     private long declarationOrder;
 
-    public Comment(HazeRegexString value) {
-        this.value = value;
+    public Comment(CharSequence sequence) {
+        this.value = new HazeRegexString(sequence);
     }
 
     @Override

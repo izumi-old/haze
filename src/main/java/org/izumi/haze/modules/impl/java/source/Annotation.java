@@ -1,6 +1,15 @@
 package org.izumi.haze.modules.impl.java.source;
 
+import org.izumi.haze.string.HazeRegexString;
+import org.izumi.haze.string.Regex;
+
 public class Annotation implements Element {
+    private HazeRegexString string;
+
+    public Annotation(CharSequence sequence) {
+        this.string = new HazeRegexString(sequence);
+    }
+
     private long declarationOrder;
 
     @Override
@@ -15,6 +24,13 @@ public class Annotation implements Element {
 
     @Override
     public void renameClassAndUsages(String name, String replacement) {
-        //TODO:
+        if (string.contains(name)) {
+            string = string.replaceAll(new Regex(name), replacement);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return string.toString();
     }
 }

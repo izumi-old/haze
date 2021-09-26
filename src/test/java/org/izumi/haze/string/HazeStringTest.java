@@ -85,4 +85,12 @@ public class HazeStringTest {
         assert string.countOccurrences(" ", new Range(0, 1)) == 1;
         assert string.countOccurrences(" ", new Range(1, 2)) == 1;
     }
+
+    @Test
+    public void trimTest() {
+        assert new HazeString("No trim required").trim().equals("No trim required");
+        assert new HazeString(" A trim is required").trim().equals("A trim is required");
+        assert new HazeString("A trim is required ").trim().equals("A trim is required");
+        assert new HazeString("             ").trim().equals("");
+    }
 }
