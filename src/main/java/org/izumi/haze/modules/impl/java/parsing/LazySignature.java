@@ -24,15 +24,6 @@ public class LazySignature extends Signature {
     }
 
     @Override
-    public Recognition recognize() {
-        if (!parsed) {
-            parse();
-        }
-
-        return super.recognize();
-    }
-
-    @Override
     public Collection<Keyword> getKeywords() {
         if (!parsed) {
             parse();

@@ -4,7 +4,7 @@ import org.izumi.haze.modules.Content;
 import org.izumi.haze.modules.impl.java.parsing.ImportsParsing;
 import org.izumi.haze.modules.impl.java.parsing.PackageParsing;
 import org.izumi.haze.modules.impl.java.parsing.ClassesParsing;
-import org.izumi.haze.modules.impl.java.parsing.TopLevelCommentsParsing;
+import org.izumi.haze.modules.impl.java.parsing.CommentsParsing;
 import org.izumi.haze.modules.impl.java.util.Classes;
 import org.izumi.haze.modules.impl.java.util.Comments;
 import org.izumi.haze.modules.impl.java.util.Imports;
@@ -73,7 +73,7 @@ public class File {
         SortedMap<Range, Package> packagesMap = new PackageParsing(contentAsString).parse();
         SortedMap<Range, Import> importsMap = new ImportsParsing(contentAsString).parse();
         SortedMap<Range, Class> classesMap = new ClassesParsing(contentAsString).parse();
-        SortedMap<Range, Comment> commentsMap = new TopLevelCommentsParsing(contentAsString).parse();
+        SortedMap<Range, Comment> commentsMap = new CommentsParsing(contentAsString).parse();
 
         long declarationOrder = 1L;
         aPackage = packagesMap.values().iterator().next();

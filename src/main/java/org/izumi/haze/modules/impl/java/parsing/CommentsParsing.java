@@ -10,17 +10,17 @@ import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class TopLevelCommentsParsing {
+public class CommentsParsing {
     private static final Regex COMMENT_REGEX = new Regex("/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/");
     private final HazeRegexString value;
     private final Range range;
 
-    public TopLevelCommentsParsing(HazeString value, Range range) {
+    public CommentsParsing(HazeString value, Range range) {
         this.value = new HazeRegexString(value);
         this.range = range;
     }
 
-    public TopLevelCommentsParsing(HazeString value) {
+    public CommentsParsing(HazeString value) {
         this(value, new Range(value));
     }
 

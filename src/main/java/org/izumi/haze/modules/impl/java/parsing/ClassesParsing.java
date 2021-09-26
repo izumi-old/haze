@@ -22,7 +22,7 @@ public class ClassesParsing {
         SortedMap<Range, Class> result = new TreeMap<>();
         ranges.forEach(range -> {
             LemmaString string = value.getSub(range);
-            X.Element element = new X(string).x();
+            Recognition.Element element = new Recognition(string).recognize();
             if (element.isClass()) {
                 Class clazz = new Class(string);
                 clazz.parse();

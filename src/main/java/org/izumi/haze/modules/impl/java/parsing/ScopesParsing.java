@@ -22,7 +22,7 @@ public class ScopesParsing {
         SortedMap<Range, Scope> result = new TreeMap<>();
         ranges.forEach(range -> {
             LemmaString string = value.getSub(range);
-            X.Element element = new X(string).x();
+            Recognition.Element element = new Recognition(string).recognize();
             if (element.isScope()) {
                 Scope scope = new Scope(string);
                 scope.parse();

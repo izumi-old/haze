@@ -12,9 +12,12 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-@RequiredArgsConstructor
 public class PackageParsing {
     private final HazeRegexString string;
+
+    public PackageParsing(CharSequence sequence) {
+        this.string = new HazeRegexString(sequence);
+    }
 
     public SortedMap<Range, Package> parse() {
         CompareList<Range> ranges = string.rangesOfRegex(new Regex(Keyword.PACKAGE + ".*?;"));

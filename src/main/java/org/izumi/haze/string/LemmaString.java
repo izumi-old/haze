@@ -1,7 +1,9 @@
 package org.izumi.haze.string;
 
+import org.izumi.haze.util.ExtendedList;
 import org.izumi.haze.util.Range;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public class LemmaString extends HazeString {
@@ -86,5 +88,19 @@ public class LemmaString extends HazeString {
 
     public Optional<LemmaString> getLemmaAfter(Range range) throws IndexOutOfBoundsException {
         return getLemmaRangeAfter(range).map(this::getSub);
+    }
+
+    public Collection<LemmaString> getLemmas() {
+        if (doesNotContain(" ")) {
+            return new ExtendedList<>(this);
+        }
+
+        String[] lemmas = string.split(" ");
+        Collection<LemmaString> collection = new ExtendedList<>();
+        for (String lemma : lemmas) {
+            collection.add(new LemmaString(lemma));
+        }
+
+        return collection;
     }
 }
