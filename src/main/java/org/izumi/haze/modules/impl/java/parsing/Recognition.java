@@ -5,6 +5,7 @@ import org.izumi.haze.HazeException;
 import org.izumi.haze.modules.impl.java.source.Keyword;
 import org.izumi.haze.modules.impl.java.source.Type;
 import org.izumi.haze.string.HazeString;
+import org.izumi.haze.util.ExtendedList;
 
 import java.util.Collection;
 
@@ -56,6 +57,18 @@ public class Recognition {
             }
 
             throw new HazeException("An unknown typeEnum was given. The typeEnum: " + type);
+        }
+
+        public boolean isClass() {
+            return new ExtendedList<>(CLASS, ENUM, INTERFACE, ANNOTATION).contains(this);
+        }
+
+        public boolean isMethod() {
+            return this == METHOD;
+        }
+
+        public boolean isScope() {
+            return this == SCOPE;
         }
     }
 }

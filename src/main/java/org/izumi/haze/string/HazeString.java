@@ -88,6 +88,24 @@ public class HazeString extends HazeCharSequence {
         return firstRangeOf(sequence, inRange).isPresent();
     }
 
+    public boolean doesNotContain(CharSequence sequence) {
+        return doesNotContain(sequence, range);
+    }
+
+    public boolean doesNotContain(CharSequence sequence, Range range) throws IndexOutOfBoundsException {
+        return !contains(sequence, range);
+    }
+
+    public boolean containsAny(Collection<CharSequence> sequences) { //TODO: cover with tests
+        for (CharSequence sequence : sequences) {
+            if (contains(sequence)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public int countOccurrences(CharSequence sequence) {
         return countOccurrences(sequence, range);
     }
@@ -122,7 +140,8 @@ public class HazeString extends HazeCharSequence {
 
     protected void validateRangeToOperateIn(Range range) throws IndexOutOfBoundsException {
         if (range.end > this.range.end) {
-            throw new IndexOutOfBoundsException("Given range is out of bounds. The range: " + range);
+            throw new IndexOutOfBoundsException("Given range is out of bounds. The range: " + range +
+                    ". Bounds: " + this.range);
         }
     }
 

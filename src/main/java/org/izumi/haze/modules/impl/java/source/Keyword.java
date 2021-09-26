@@ -4,7 +4,7 @@ import org.izumi.haze.string.HazeString;
 
 import java.util.Optional;
 
-public enum Keyword {
+public enum Keyword implements CharSequence {
     CLASS("class"),
     INTERFACE("interface"),
     ANNOTATION("@interface"),
@@ -58,6 +58,22 @@ public enum Keyword {
 
     Keyword(String value) {
         this.value = value;
+    }
+
+
+    @Override
+    public int length() {
+        return value.length();
+    }
+
+    @Override
+    public char charAt(int index) {
+        return value.charAt(index);
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return value.subSequence(start, end);
     }
 
     @Override

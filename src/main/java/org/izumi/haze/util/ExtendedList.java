@@ -2,6 +2,7 @@ package org.izumi.haze.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Function;
@@ -21,6 +22,16 @@ public class ExtendedList<T> extends LinkedList<T> {
 
     public void update(int index, Function<T, T> function) {
         set(index, function.apply(get(index)));
+    }
+
+    public void addAll(Iterable<T> iterable) {
+        addAll(iterable.iterator());
+    }
+
+    public void addAll(Iterator<T> iterator) {
+        while (iterator.hasNext()) {
+            add(iterator.next());
+        }
     }
 
     @Override

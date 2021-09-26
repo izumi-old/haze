@@ -41,8 +41,8 @@ public class Class implements Element {
     private String name;
     private String otherSignature;
 
-    public Class(HazeRegexString value) {
-        this.value = value;
+    public Class(CharSequence sequence) {
+        this.value = new HazeRegexString(sequence);
     }
 
     @Override

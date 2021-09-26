@@ -56,6 +56,23 @@ public class HazeStringTest {
         assert !string.contains("tht");
 
         assert !string.contains("know", new Range(0, 3));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> string.contains("a", new Range(998, 999)));
+    }
+
+    @Test
+    public void doesNotContainTest() {
+        HazeString string = new HazeString("I know that I know nothing?");
+        assert !string.doesNotContain("ow");
+        assert !string.doesNotContain("I");
+        assert !string.doesNotContain("?");
+        assert string.doesNotContain("!");
+        assert string.doesNotContain("  ");
+        assert string.doesNotContain("tht");
+
+        assert string.doesNotContain("know", new Range(0, 3));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> string.contains("a", new Range(998, 999)));
     }
 
     @Test
