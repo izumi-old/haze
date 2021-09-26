@@ -10,6 +10,9 @@ public class HazeRegexStringTest {
     @Test
     public void replaceAllIfTest() {
         HazeRegexString string = new HazeRegexString("I know thatt I know nothing?");
+        HazeRegexString string1 = new HazeRegexString("public void x() { " +
+                "A a = new A(1, 2); A aa = new A(a.a, a.a); B b = new B(); B bb = new B(); }");
+
         assert string.replaceAllIf(new Regex("now"), "won", s -> true)
                 .equals("I kwon thatt I kwon nothing?");
         assert string.replaceAllIf(new Regex("now"), "won", s -> false)
@@ -17,6 +20,9 @@ public class HazeRegexStringTest {
         assert string.replaceAllIf(new Regex("123"), "", s -> true).equals(string);
         assert string.replaceAllIf(new Regex("that.?"), "", s -> true)
                 .equals("I know  I know nothing?");
+        assert string1.replaceAllIf(new Regex("A"), "Zo", s -> true)
+                .equals("public void x() { " +
+                        "Zo a = new Zo(1, 2); Zo aa = new Zo(a.a, a.a); B b = new B(); B bb = new B(); }");
     }
 
     @Test

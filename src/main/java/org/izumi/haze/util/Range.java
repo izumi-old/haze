@@ -95,11 +95,11 @@ public class Range implements Comparable<Range> {
             throw new IllegalArgumentException("Cannot shift because length of range is too small");
         }
 
-        return new Range(start, end - changed);
+        return new Range(start - changed, end - changed);
     }
 
     public long getLength() {
-        return end - start;
+        return end + 1 - start;
     }
 
     public boolean isEmpty() {

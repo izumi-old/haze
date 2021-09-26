@@ -98,14 +98,14 @@ public class HazeRegexString extends HazeString {
         ExtendedList<Range> replaceRanges = new ExtendedList<>();
         while (matcher.find() && matcher.end() <= range.end) {
             if (isPredicateTest(matcher.start(), regex.toString(), predicate)) {
-                replaceRanges.add(new Range(matcher.start(), matcher.end()));
+                replaceRanges.add(new Range(matcher.start(), matcher.end() - 1));
             }
         }
 
         StringBuilder result = new StringBuilder(string);
         for (int i = 0; i < replaceRanges.size(); i++) {
             Range replaceRange = replaceRanges.get(i);
-            result.replace(replaceRange.start, replaceRange.end, replacement);
+            result.replace(replaceRange.start, replaceRange.end + 1, replacement);
             for (int j = i; j < replaceRanges.size(); j++) {
                 replaceRanges.update(j, range1 -> range1.shift((int) replaceRange.getLength() - replacement.length()));
             }

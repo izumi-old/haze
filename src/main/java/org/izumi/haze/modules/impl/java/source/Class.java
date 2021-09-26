@@ -74,6 +74,10 @@ public class Class implements Element {
         this.declarationOrder = declarationOrder;
     }
 
+    public Classes getClasses() {
+        return new ClassesImpl(classes);
+    }
+
     public String getName() {
         return name;
     }

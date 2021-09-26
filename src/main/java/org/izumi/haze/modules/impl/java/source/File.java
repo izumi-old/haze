@@ -50,7 +50,13 @@ public class File {
     }
 
     public Classes getClasses() {
-        return new ClassesImpl(classes);
+        Classes classes = new ClassesImpl();
+        for (Class clazz : this.classes) {
+            classes.addAll(clazz.getClasses());
+            classes.add(clazz);
+        }
+
+        return classes;
     }
 
     public void renameClassAndUsages(String name, String replacement) {
@@ -126,18 +132,18 @@ public class File {
     @Override
     public String toString() {
         HazeStringBuilder builder = new HazeStringBuilder()
-                .appendSeparateLine(aPackage);
+                .append(aPackage);
 
         if (aPackage.isNotDefault()) {
-            builder = builder.appendNewLine();
+            builder = builder.appendSpace();
         }
 
         if (imports.isNotEmpty()) {
             builder = builder.appendEachSeparateLine(imports.getOrderedCopy())
-                    .appendNewLine();
+                    .appendSpace();
         }
 
-        return builder.appendEachSeparateLine(new ElementsImpl(classes, comments).getOrderedCopy())
+        return builder.appendEachSeparateSpace(new ElementsImpl(classes, comments).getOrderedCopy())
                 .build();
     }
 }
