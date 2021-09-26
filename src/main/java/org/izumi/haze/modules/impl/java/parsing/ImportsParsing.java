@@ -16,7 +16,7 @@ public class ImportsParsing {
     private final HazeRegexString value;
 
     public SortedMap<Range, Import> parse() {
-        CompareList<Range> ranges = value.rangesOfRegex(new Regex(Keyword.IMPORT + ".*;"));
+        CompareList<Range> ranges = value.rangesOfRegex(new Regex(Keyword.IMPORT + ".*?;"));
         if (ranges.isEmpty()) {
             return new TreeMap<>();
         } else {

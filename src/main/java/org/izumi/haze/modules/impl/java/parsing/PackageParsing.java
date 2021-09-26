@@ -17,7 +17,7 @@ public class PackageParsing {
     private final HazeRegexString string;
 
     public SortedMap<Range, Package> parse() {
-        CompareList<Range> ranges = string.rangesOfRegex(new Regex(Keyword.PACKAGE + ".*;"));
+        CompareList<Range> ranges = string.rangesOfRegex(new Regex(Keyword.PACKAGE + ".*?;"));
         if (ranges.isEmpty()) {
             return new TreeMap<>(Map.of(Range.EMPTY_RANGE, Package.DEFAULT_PACKAGE));
         } else {

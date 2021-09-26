@@ -3,7 +3,7 @@ package org.izumi.haze.modules.impl.java.source;
 import org.izumi.haze.modules.Content;
 import org.izumi.haze.modules.impl.java.parsing.ImportsParsing;
 import org.izumi.haze.modules.impl.java.parsing.PackageParsing;
-import org.izumi.haze.modules.impl.java.parsing.TopLevelClassesParsing;
+import org.izumi.haze.modules.impl.java.parsing.ClassesParsing;
 import org.izumi.haze.modules.impl.java.parsing.TopLevelCommentsParsing;
 import org.izumi.haze.modules.impl.java.util.Classes;
 import org.izumi.haze.modules.impl.java.util.Comments;
@@ -72,7 +72,7 @@ public class File {
                 .replaceAll(new Regex("[ ][ ]*"), " ");
         SortedMap<Range, Package> packagesMap = new PackageParsing(contentAsString).parse();
         SortedMap<Range, Import> importsMap = new ImportsParsing(contentAsString).parse();
-        SortedMap<Range, Class> classesMap = new TopLevelClassesParsing(contentAsString).parse();
+        SortedMap<Range, Class> classesMap = new ClassesParsing(contentAsString).parse();
         SortedMap<Range, Comment> commentsMap = new TopLevelCommentsParsing(contentAsString).parse();
 
         long declarationOrder = 1L;

@@ -1,7 +1,7 @@
 package org.izumi.haze.modules.impl.java.parsing;
 
 import org.izumi.haze.HazeException;
-import org.izumi.haze.string.HazeString;
+import org.izumi.haze.string.LemmaString;
 import org.izumi.haze.util.OptionalList;
 import org.izumi.haze.util.Range;
 
@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class TopLevelBracesIterator implements Iterator<Range> {
-    private final HazeString string;
+public class TopLevelElementsIterator implements Iterator<Range> {
+    private final LemmaString string;
     private Range currentRange;
 
-    public TopLevelBracesIterator(HazeString string) {
-        this.string = string;
+    public TopLevelElementsIterator(CharSequence sequence) {
+        this.string = new LemmaString(sequence);
         this.currentRange = new Range(string);
     }
 
@@ -40,7 +40,7 @@ public class TopLevelBracesIterator implements Iterator<Range> {
             currentRange = new Range(bracesRange.end + 1, string.getRange().get().end);
         }
 
-        return bracesRange;
+        return includeSignatureAndAnnotationsIfHave(bracesRange);
     }
 
     private Optional<Integer> findClosingBrace(int start) {
@@ -94,5 +94,25 @@ public class TopLevelBracesIterator implements Iterator<Range> {
 
     private boolean isNotInLiteral(int index) {
         return !isInLiteral(index);
+    }
+
+    private Range includeSignatureAndAnnotationsIfHave(Range range) {
+        Range searchRange = range;
+        while (true) {
+            Optional<Range> lemmaBeforeRangeOptional = string.getLemmaRangeBefore(searchRange);
+            if (lemmaBeforeRangeOptional.isEmpty()) {
+                break;
+            }
+
+            Range lemmaBeforeRange = lemmaBeforeRangeOptional.get();
+            LemmaString string = this.string.getSub(lemmaBeforeRange);
+            if (string.contains(";") || string.contains("}")) {
+                break;
+            }
+
+            searchRange = new Range(lemmaBeforeRange.start, searchRange.end);
+        }
+
+        return searchRange;
     }
 }

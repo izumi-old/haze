@@ -16,9 +16,8 @@ public class Scope implements Element {
     private Scopes topLevelScopes;
     private Collection<Variable> variables;
 
-    public Scope(HazeString value, Range range) {
-        this.value = value;
-        this.range = range;
+    public Scope(CharSequence sequence) {
+        this.value = new HazeString(sequence);
     }
 
     @Override
@@ -35,7 +34,7 @@ public class Scope implements Element {
         //TODO: implement
     }
 
-    void parse() {
+    public void parse() {
         /*Range searchIn = new Range(range.start + 1, range.end - 1);
         topLevelClasses = new TopLevelClassesParsing(value, searchIn).parse();
         topLevelScopes = new TopLevelScopesParsing(value, searchIn).parse();

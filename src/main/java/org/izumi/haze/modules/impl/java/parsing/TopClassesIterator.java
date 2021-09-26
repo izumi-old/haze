@@ -20,7 +20,7 @@ public class TopClassesIterator implements Iterator<RangeClass> {
         this.value = value;
         this.range = new Range(value);
         this.currentRange = new Range(value);
-        this.topLevelBracesIterator = new TopLevelBracesIterator(value);
+        this.topLevelBracesIterator = new TopLevelElementsIterator(value);
     }
 
     @Override

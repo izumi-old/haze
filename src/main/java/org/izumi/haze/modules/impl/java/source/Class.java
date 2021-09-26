@@ -1,8 +1,8 @@
 package org.izumi.haze.modules.impl.java.source;
 
 import org.izumi.haze.HazeException;
-import org.izumi.haze.modules.impl.java.parsing.TopLevelClassesParsing;
-import org.izumi.haze.modules.impl.java.parsing.TopLevelScopesParsing;
+import org.izumi.haze.modules.impl.java.parsing.ClassesParsing;
+import org.izumi.haze.modules.impl.java.parsing.ScopesParsing;
 import org.izumi.haze.modules.impl.java.util.Classes;
 import org.izumi.haze.modules.impl.java.util.Comments;
 import org.izumi.haze.modules.impl.java.util.Elements;
@@ -99,9 +99,9 @@ public class Class implements Element {
 
         Range searchIn = getBodyRange();
 
-        SortedMap<Range, Class> classesMap = new TopLevelClassesParsing(value.getSub(searchIn)).parse();
+        SortedMap<Range, Class> classesMap = new ClassesParsing(value.getSub(searchIn)).parse();
         classes.addAll(classesMap.values());
-        SortedMap<Range, Scope> scopesMap = new TopLevelScopesParsing(value, searchIn).parse();
+        SortedMap<Range, Scope> scopesMap = new ScopesParsing(value.getSub(searchIn)).parse();
         scopes.addAll(scopesMap.values());
 
         RangeMap<Element> elementsMap = new RangeMap<>();
